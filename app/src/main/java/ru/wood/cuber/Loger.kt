@@ -4,7 +4,7 @@ import android.util.Log
 
 const val MYLOG="myLog"
 object Loger {
-    val logIsTrue: Boolean=true
+    private val logIsTrue: Boolean=true
 
     fun log(message: Any?){
         if (!logIsTrue){return}

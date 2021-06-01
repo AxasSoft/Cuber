@@ -29,5 +29,8 @@ class MainActivity : AppCompatActivity() {
         //light тема
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
+        for (x in 16..51 ){
+            Util.DIAMETERS?.add(x)
+        }
     }
 }

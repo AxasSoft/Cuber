@@ -18,7 +18,11 @@
         android:id="@+id/treesFragment"
         android:name="ru.wood.cuber.ui.TreesFragment"
         android:label="fragment_trees"
-        tools:layout="@layout/fragment_trees" />
+        tools:layout="@layout/fragment_trees" >
+        <action
+            android:id="@+id/action_treesFragment_to_treeRedactFragment"
+            app:destination="@id/treeRedactFragment" />
+    </fragment>
     <fragment
         android:id="@+id/myCalculationsFragment"
         android:name="ru.wood.cuber.ui.MyCalculationsFragment"
@@ -27,4 +31,8 @@
             android:id="@+id/action_myCalculationsFragment_to_containersFragment"
             app:destination="@id/containersFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/treeRedactFragment"
+        android:name="ru.wood.cuber.ui.TreeRedactFragment"
+        android:label="TreeRedactFragment" />
 </navigation>

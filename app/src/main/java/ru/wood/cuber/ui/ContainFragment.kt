@@ -3,7 +3,6 @@ package ru.wood.cuber.ui
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
-import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
@@ -14,14 +13,10 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.daimajia.swipe.SwipeLayout
 import dagger.hilt.android.AndroidEntryPoint
-import ru.wood.cuber.Loger
 import ru.wood.cuber.adapters.RecyclerCallback
-import ru.wood.cuber.adapters.SwipeRecyclerAdapter
 import ru.wood.cuber.adapters.SwipeRecyclerAdapter2
-import ru.wood.cuber.data.MyCalculation
 import ru.wood.cuber.data.MyСontainer
 import ru.wood.cuber.databinding.FragmentContainBinding
-import ru.wood.cuber.databinding.ItemCalculateSwipeBinding
 import ru.wood.cuber.databinding.ItemContainerSwipeBinding
 
 @AndroidEntryPoint

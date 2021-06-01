@@ -17,8 +17,8 @@ import ru.wood.cuber.databinding.ItemContainerSwipeBinding
 import ru.wood.cuber.view_models.ContainsViewModel
 import java.util.ArrayList
 
-class SwipeRecyclerAdapter (context: Context, objects: List<MyСontainer>?, viewModel : ContainsViewModel):
-    RecyclerSwipeAdapter<SwipeRecyclerAdapter.SimpleViewHolder>() {
+class SwipeRecyclerAdapter_UNUSED (context: Context, objects: List<MyСontainer>?, viewModel : ContainsViewModel):
+    RecyclerSwipeAdapter<SwipeRecyclerAdapter_UNUSED.SimpleViewHolder>() {
     lateinit var positionListener: OnPositionClickListener
     lateinit var counterListener: OnCounterClickListener
 

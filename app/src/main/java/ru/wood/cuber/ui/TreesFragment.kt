@@ -1,9 +1,10 @@
 package ru.wood.cuber.ui
 
+import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -12,15 +13,15 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import com.daimajia.swipe.SwipeLayout
 import dagger.hilt.android.AndroidEntryPoint
+import ru.wood.cuber.Loger
 import ru.wood.cuber.R
+import ru.wood.cuber.Util
+import ru.wood.cuber.ViewDialog
 import ru.wood.cuber.adapters.RecyclerCallback
 import ru.wood.cuber.adapters.SimpleRecyclerAdapter
 import ru.wood.cuber.adapters.SwipeRecyclerAdapter2
-import ru.wood.cuber.data.MyCalculation
 import ru.wood.cuber.data.TreePosition
 import ru.wood.cuber.databinding.FragmentTreesBinding
-import ru.wood.cuber.databinding.ItemCalculateSwipeBinding
-import ru.wood.cuber.databinding.ItemTreePositionBinding
 import ru.wood.cuber.databinding.ItemTreesSwipeBinding
 import ru.wood.cuber.view_models.TreesViewModel
 
@@ -29,14 +30,15 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
     private lateinit var navController: NavController
     private val viewModel: TreesViewModel by viewModels()
     private lateinit var adapter: SwipeRecyclerAdapter2<TreePosition, ItemTreesSwipeBinding>
+    private var currentPositionLength : Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         val actionBar=(activity as AppCompatActivity).supportActionBar
         actionBar?.apply {
@@ -45,24 +47,67 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
 
         val binding=FragmentTreesBinding.inflate(inflater)
         binding.textView1.paintFlags = binding.textView1.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-        navController= NavHostFragment.findNavController(this)
+        navController= Navigation.findNavController(requireActivity(),R.id.nav_host_fragment)
         val view= binding.root
         val recycler=binding.recycler
+
+        val spinnerLength = binding.spinnerLength
+
+        val lengths :List<String> = ArrayList<String>().addSpinnerList(
+            Util.LENGTHS
+        )
+        currentPositionLength=1
+
+        spinnerLength.apply {
+            setAdapter(lengths)
+            setSelection(currentPositionLength)
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?, view: View,
+                    position: Int, id: Long
+                ) {
+                    if (position!=currentPositionLength){
+                        ViewDialog.showDialogOfLength(context,{
+                            Loger.log(position)
+                        },{
+                            setSelection(currentPositionLength)
+                        })
+                    }
+                    (parent!!.getChildAt(0) as TextView).apply {
+                        setTextColor(Color.WHITE)
+                        textSize = 14f
+                        text=this.text.toString()+" м"
+                    }
+
+                }
+
+                override fun onNothingSelected(arg0: AdapterView<*>?) {
+
+                }
+            }
+        }
 
         val id= arguments?.getInt("id")
         with(viewModel){
             id?.let {getListTrees(it)}
             liveData.observe(viewLifecycleOwner, {
                 it?.let {
-                    if (it==null){return@observe}
-                    adapter=SwipeRecyclerAdapter2(it, R.layout.item_trees_swipe,
-                            object : RecyclerCallback<ItemTreesSwipeBinding, TreePosition>{
-                                override fun bind(binder: ItemTreesSwipeBinding, entity: TreePosition, position: Int, itemView: View) {
-                                    swipeHolderAction(binder, entity, position, itemView)
-                                    subscribeClickPosition(binder.include.clicableLayout,entity.id)
-                                }
-                            })
-                    recycler.adapter=adapter
+                    if (it == null) {
+                        return@observe
+                    }
+                    adapter = SwipeRecyclerAdapter2(it, R.layout.item_trees_swipe,
+                        object : RecyclerCallback<ItemTreesSwipeBinding, TreePosition> {
+                            override fun bind(
+                                binder: ItemTreesSwipeBinding,
+                                entity: TreePosition,
+                                position: Int,
+                                itemView: View
+                            ) {
+                                swipeHolderAction(binder, entity, position, itemView)
+                                subscribeClickPosition(binder.include.clicableLayout, entity.id)
+                            }
+                        })
+                    recycler.adapter = adapter
                     adapter.notifyDataSetChanged()
 
                     actionBar?.title = "name"
@@ -77,7 +122,7 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
         clicableLayout.setOnClickListener {
             val bundle= Bundle()
             bundle.putInt("id", idPosition)
-            //navController.navigate(R.id.,bundle)
+            navController.navigate(R.id.action_treesFragment_to_treeRedactFragment, bundle)
         }
     }
     fun backStack(){
@@ -100,14 +145,21 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
     }
 
     override fun onPositionClick(view: View, id: Int) {
+
     }
-    private fun swipeHolderAction(binder: ItemTreesSwipeBinding, entity: TreePosition, position: Int, itemView: View){
+    private fun swipeHolderAction(
+        binder: ItemTreesSwipeBinding,
+        entity: TreePosition,
+        position: Int,
+        itemView: View
+    ){
         with(binder){
             this.entity=entity
             swipe.setShowMode(SwipeLayout.ShowMode.PullOut)
             //dari kanan
             swipe.addDrag(
-                    SwipeLayout.DragEdge.Right, binder.swipe.findViewById(R.id.bottom_wraper))
+                SwipeLayout.DragEdge.Right, binder.swipe.findViewById(R.id.bottom_wraper)
+            )
             swipe.addSwipeListener(object : SwipeLayout.SwipeListener {
                 override fun onStartOpen(layout: SwipeLayout?) {}
                 override fun onOpen(layout: SwipeLayout?) {}
@@ -133,11 +185,28 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
                     mItemManger.closeAllItems()
                 }
 
-                Toast.makeText(requireContext(), "Deleted " + binder.include.entity?.id,
-                        Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(), "Deleted " + binder.include.entity?.id,
+                    Toast.LENGTH_SHORT
+                ).show()
             })
 
         }
         adapter.mItemManger.bindView(itemView, position)
+    }
+    private fun <T : Number> ArrayList<String>.addSpinnerList(numbers: List<T>): List<String>{
+        for (item: T in numbers){
+            this.add(item.toString())
+        }
+        return this
+    }
+    private fun Spinner.setAdapter(list: List<String>){
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            list
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        this.adapter = adapter
     }
 }

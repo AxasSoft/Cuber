@@ -14,13 +14,12 @@ class MyPagerAdapter (@NonNull fragmentActivity: FragmentActivity) : FragmentSta
         when (position) {
             0 -> return Diametr1()
             1 -> return Diametr2()
-            2 -> return Diametr3()
         }
         return Diametr1()
     }
 
     override fun getItemCount(): Int {
-        return 3
+        return 2
     }
 
 }
