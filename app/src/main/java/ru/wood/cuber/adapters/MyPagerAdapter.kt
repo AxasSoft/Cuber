@@ -6,7 +6,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import ru.wood.cuber.ui.diametrs.Diametr1
 import ru.wood.cuber.ui.diametrs.Diametr2
-import ru.wood.cuber.ui.diametrs.Diametr3
 
 class MyPagerAdapter (@NonNull fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
 

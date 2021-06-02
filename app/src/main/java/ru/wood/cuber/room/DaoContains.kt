@@ -25,6 +25,10 @@ interface DaoContains {
    /* @Query("SELECT * FROM MyСontainer")
     fun load() : List<MyСontainer>*/
 
-    @Query("SELECT * FROM MyСontainer LEFT JOIN MyCalculatesContentsTab ON MyСontainer.id==MyCalculatesContentsTab.id WHERE MyCalculatesContentsTab.idOfCalculates=:calculateId")
+    @Query("SELECT * FROM MyСontainer LEFT JOIN MyCalculatesContentsTab ON MyСontainer.id==MyCalculatesContentsTab.idOfContainers WHERE MyCalculatesContentsTab.idOfCalculates=:calculateId")
     fun load(calculateId: Long) : List<MyСontainer>
+
+   /* @Query("SELECT * FROM MyСontainer LEFT JOIN MyCalculatesContentsTab ON MyСontainer.id==MyCalculatesContentsTab.id WHERE MyCalculatesContentsTab.idOfCalculates=:calculateId")
+    fun load(calculateId: Long) : List<MyСontainer>*/
+
 }

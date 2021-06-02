@@ -6,9 +6,9 @@ import androidx.room.PrimaryKey
 @Entity
 data class TreePosition (
     @PrimaryKey(autoGenerate = true)
-    override var id: Long,
+    override var id: Long=0,
     val length: Double?,
-    val diameter: Double?,
-    val quantity: Int?,
-    val volume: Double?
+    val diameter: Int?,
+    val quantity: Int?=null,
+    val volume: Double?=null
 ):BaseItem()

@@ -7,6 +7,7 @@ import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -27,10 +28,11 @@ import ru.wood.cuber.view_models.TreesViewModel
 @AndroidEntryPoint
 class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
     private var navController: NavController? =null
-    private val viewModel: TreesViewModel by viewModels()
+    private val viewModel: TreesViewModel by activityViewModels()
     private var adapter: SwipeRecyclerAdapter2<TreePosition, ItemTreesSwipeBinding>?=null
     private var currentPositionLength : Int = 0
     private lateinit var spinnerText: TextView
+    private var idOfContain : Long? =null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +61,6 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
                 Util.LENGTHS
         )
 
-
         spinnerLength?.apply {
             setAdapter(lengths)
             setSelection(currentPositionLength)
@@ -83,6 +84,8 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
                         }
                         )
                     }
+
+                    viewModel.commonLength=Util.LENGTHS[currentPositionLength]
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -91,9 +94,10 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
             }
         }
 
-        val id= arguments?.getInt("id") ?: 0
+        idOfContain= arguments?.getLong("id")
         with(viewModel){
-            getListTrees(id)
+            commonСontainerId=idOfContain
+            refreshList(commonСontainerId!!)
             liveData.observe(viewLifecycleOwner, {
                 it?.let {
                     adapter = SwipeRecyclerAdapter2(it, R.layout.item_trees_swipe,
@@ -178,6 +182,7 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
 
             Delete.setOnClickListener(View.OnClickListener { v ->
                 //viewModel.deleteExactly(list[position].id) //Удаление из БД
+                viewModel.deltePosition(entity, idOfContain!!)
 
                 adapter!!.apply {
                     mItemManger.removeShownLayouts(binder.swipe)
