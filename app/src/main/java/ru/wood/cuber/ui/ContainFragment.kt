@@ -13,6 +13,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.daimajia.swipe.SwipeLayout
 import dagger.hilt.android.AndroidEntryPoint
+import ru.wood.cuber.ViewDialog
 import ru.wood.cuber.adapters.RecyclerCallback
 import ru.wood.cuber.adapters.SwipeRecyclerAdapter2
 import ru.wood.cuber.data.MyСontainer
@@ -24,6 +25,7 @@ class ContainFragment : Fragment() {
     private lateinit var navController: NavController
     private val viewModel: ContainsViewModel by viewModels()
     private lateinit var adapter: SwipeRecyclerAdapter2<MyСontainer, ItemContainerSwipeBinding>
+    private var idOfCalculate: Long? =null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +46,7 @@ class ContainFragment : Fragment() {
     ): View? {
         val binding=FragmentContainBinding.inflate(inflater);
         val view=binding.root
+        binding.fragment=this
         navController= NavHostFragment.findNavController(this)
 
         /*(activity as AppCompatActivity).supportActionBar?.apply {
@@ -54,9 +57,9 @@ class ContainFragment : Fragment() {
         }*/
         val recycler=binding.recycler
 
-        val id= arguments?.getInt("id")
+        idOfCalculate= arguments?.getLong("id")
         with(viewModel){
-            id?.let {getListContains(it)}
+            idOfCalculate?.let {refreshList(it)}
             liveData.observe(viewLifecycleOwner,{
                 if (it==null){return@observe}
                 adapter=SwipeRecyclerAdapter2(it,R.layout.item_container_swipe,
@@ -76,6 +79,11 @@ class ContainFragment : Fragment() {
     fun backStack(){
         navController.popBackStack()
     }
+    fun createNew( view: View){
+        ViewDialog.showCreateCalculationDialog(requireContext(), "Введите номер контейнера"){
+            viewModel.addNew(it,idOfCalculate!!)
+        }
+    }
 
     fun goToTrees(v:View){
         Navigation.findNavController(v).navigate(R.id.action_containersFragment_to_treesFragment)
@@ -93,10 +101,10 @@ class ContainFragment : Fragment() {
         }
     }
 
-    fun subscribeClickPosition(clicableLayout: View, idPosition: Int){
+    fun subscribeClickPosition(clicableLayout: View, idPosition: Long){
         clicableLayout.setOnClickListener {
             val bundle= Bundle()
-            bundle.putInt("id", idPosition)
+            bundle.putLong("id", idPosition)
             navController.navigate(R.id.action_containersFragment_to_treesFragment,bundle)
         }
     }
@@ -118,12 +126,13 @@ class ContainFragment : Fragment() {
             })
             swipe.getSurfaceView().setOnClickListener(View.OnClickListener { v ->
                 val bundle = Bundle()
-                bundle.putInt("id", entity.id)
+                bundle.putLong("id", entity.id)
                 Navigation.findNavController(v).navigate(R.id.treesFragment, bundle)
             })
 
             Delete.setOnClickListener(View.OnClickListener { v ->
                 //viewModel.deleteExactly(list[position].id) //Удаление из БД
+                viewModel.deltePosition(entity, idOfCalculate!!)
 
                 adapter.apply {
                     mItemManger.removeShownLayouts(binder.swipe)

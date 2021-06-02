@@ -2,6 +2,7 @@ package ru.wood.cuber.data
 
 import androidx.room.PrimaryKey
 
-open class BaseItem (
-        open var id:Int
-        )
+abstract class BaseItem (
+        ){
+        abstract var id:Long
+}

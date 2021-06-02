@@ -33,6 +33,7 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
     <androidx.appcompat.widget.AppCompatButton
+        android:onClick="@{fragment::createNew}"
         android:layout_margin="15dp"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"

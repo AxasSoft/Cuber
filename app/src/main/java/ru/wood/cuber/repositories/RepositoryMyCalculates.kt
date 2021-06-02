@@ -4,7 +4,7 @@ import ru.wood.cuber.data.MyCalculation
 import ru.wood.cuber.room.DaoMyCalculates
 import javax.inject.Inject
 
-class RepositoryMyCalculates @Inject constructor(dao: DaoMyCalculates) {
+class RepositoryMyCalculates @Inject constructor(val dao: DaoMyCalculates)  {
 
     fun getListCalculatesForExample(): List<MyCalculation> {
         val container1 = MyCalculation(1, "Расчет №1", "22.05.2021",5)
@@ -16,5 +16,17 @@ class RepositoryMyCalculates @Inject constructor(dao: DaoMyCalculates) {
         val list: List<MyCalculation> =
             arrayListOf(container1,container2,container3,container4,container5)
         return list
+    }
+
+    fun saveOne(one: MyCalculation): Long{
+        return dao.save(one)
+    }
+
+    fun loadList() : List<MyCalculation>{
+        return dao.load()
+    }
+
+    fun  deleteOne(one: MyCalculation): Int{
+        return dao.delete(one)
     }
 }

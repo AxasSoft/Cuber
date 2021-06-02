@@ -53,7 +53,7 @@ class SwipeRecyclerAdapter_UNUSED (context: Context, objects: List<MyСontainer>
 
         viewHolder.binding!!.swipe.getSurfaceView().setOnClickListener(View.OnClickListener { v ->
             val bundle = Bundle()
-            bundle.putInt("id", list[position].id)
+            bundle.putInt("id", list[position].id.toInt())
             Navigation.findNavController(v).navigate(R.id.treesFragment, bundle)
         })
 
@@ -97,7 +97,7 @@ class SwipeRecyclerAdapter_UNUSED (context: Context, objects: List<MyСontainer>
 
         override fun onClick(v: View?) {
             if(v?.id==R.id.clicable_layout){
-                positionListener.OnPositionClick(v,list[position].id)
+                positionListener.OnPositionClick(v,list[position].id.toInt())
             }
         }
     }

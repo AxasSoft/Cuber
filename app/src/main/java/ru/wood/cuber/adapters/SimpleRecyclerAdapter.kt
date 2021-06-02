@@ -38,7 +38,7 @@ class SimpleRecyclerAdapter (
         }
 
         override fun onClick(v: View?) {
-            positionListener.onPositionClick(v!!, values[position].id)
+            positionListener.onPositionClick(v!!, values[position].id.toInt())
         }
     }
     interface OnPositionClickListener{

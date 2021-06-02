@@ -4,9 +4,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 @Entity
 data class MyCalculation (
-    @PrimaryKey (autoGenerate = true)
-    override var id: Int,
-    val name: String,
-    val date:String,
-    val quantity: Int // ??????????
-        ):BaseItem(id)
+        @PrimaryKey (autoGenerate = true)
+        override var id: Long =0,
+        var name: String?,
+        val date:String?,
+        val quantity: Int? =null// ??????????
+        ):BaseItem() {
+
+        }

@@ -9,8 +9,8 @@ import ru.wood.cuber.data.*
 const val DATABASE_NAME = "cuber-db"
 
 @Database (entities = [
-    ContainerContents::class,
-    MyCalculatesContents::class,
+    ContainerContentsTab::class,
+    MyCalculatesContentsTab::class,
     TreePosition::class,
     MyСontainer::class,
     MyCalculation::class], version = 1)
@@ -25,7 +25,8 @@ abstract class AppDatabase: RoomDatabase() {
         fun getInstance(context: Context): AppDatabase? {
             if (INSTANCE == null) {
                 synchronized(AppDatabase::class) {
-                    INSTANCE = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, DATABASE_NAME).build()
+                    INSTANCE = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, DATABASE_NAME)
+                            .fallbackToDestructiveMigration().build()
                 }
             }
             return INSTANCE

@@ -6,9 +6,9 @@ import androidx.room.PrimaryKey
 @Entity
 data class MyСontainer (
     @PrimaryKey(autoGenerate = true)
-    override var id:Int,
-    val date: String,
-    val name:String,
-    val volume: Double,
-    val quantity: Int
-):BaseItem(id)
+    override var id:Long=0,
+    val date: String?,
+    val name:String?,
+    val volume: Double?=null,
+    val quantity: Int?=null
+):BaseItem()

@@ -70,7 +70,7 @@ class SwipeRecyclerAdapter2<T : BaseItem, VM : ViewDataBinding>(
         }
 
         override fun onClick(v: View?) {
-            positionListener.OnPositionClick(v!!, list[position].id)
+            positionListener.OnPositionClick(v!!, list[position].id.toInt())
         }
     }
 

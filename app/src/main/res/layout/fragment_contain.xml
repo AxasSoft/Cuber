@@ -19,7 +19,7 @@
         />
 
     <androidx.appcompat.widget.AppCompatButton
-
+        android:onClick="@{fragment::createNew}"
         android:layout_margin="15dp"
         android:layout_gravity="bottom|center_horizontal"
         android:paddingHorizontal="@dimen/margin_min"

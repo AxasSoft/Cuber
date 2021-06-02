@@ -12,7 +12,9 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import com.daimajia.swipe.SwipeLayout
 import dagger.hilt.android.AndroidEntryPoint
+import ru.wood.cuber.Loger
 import ru.wood.cuber.R
+import ru.wood.cuber.ViewDialog
 import ru.wood.cuber.adapters.RecyclerCallback
 import ru.wood.cuber.adapters.SwipeRecyclerAdapter2
 import ru.wood.cuber.data.MyCalculation
@@ -51,11 +53,12 @@ class MyCalculationsFragment : Fragment() {
         }*/
         val binding=FragmentMyCalculationsBinding.inflate(inflater)
         val view=binding.root
+        binding.fragment=this
         navController=findNavController(this)
 
         val recycler=binding.recycler
         with(viewModel){
-            getListContains()
+            refreshList()
             liveData.observe(viewLifecycleOwner,{
                 if (it==null){return@observe}
                 adapter=SwipeRecyclerAdapter2(it,R.layout.item_calculate_swipe,
@@ -72,10 +75,17 @@ class MyCalculationsFragment : Fragment() {
 
         return view
     }
-    fun subscribeClickPosition(clicableLayout: View, idPosition: Int){
+
+    fun createNew( view: View){
+        ViewDialog.showCreateCalculationDialog(requireContext(),"Введите номер расчета"){
+            viewModel.addNew(it)
+        }
+    }
+
+    fun subscribeClickPosition(clicableLayout: View, idPosition: Long){
         clicableLayout.setOnClickListener {
             val bundle= Bundle()
-            bundle.putInt("id", idPosition)
+            bundle.putLong("id", idPosition)
             navController.navigate(R.id.action_myCalculationsFragment_to_containersFragment,bundle)
         }
     }
@@ -111,12 +121,13 @@ class MyCalculationsFragment : Fragment() {
             })
             swipe.getSurfaceView().setOnClickListener(View.OnClickListener { v ->
                 val bundle = Bundle()
-                bundle.putInt("id", entity.id)
+                bundle.putLong("id", entity.id)
                 Navigation.findNavController(v).navigate(R.id.treesFragment, bundle)
             })
 
             Delete.setOnClickListener(View.OnClickListener { v ->
                 //viewModel.deleteExactly(list[position].id) //Удаление из БД
+                viewModel.deletePosition(entity)
 
                 adapter.apply {
                     mItemManger.removeShownLayouts(binder.swipe)

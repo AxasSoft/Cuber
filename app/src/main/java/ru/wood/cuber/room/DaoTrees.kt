@@ -10,7 +10,6 @@ interface DaoTrees {
    /* @Insert
     fun addTreePosition(vararg treePosition: TreePositon): List<Long>
 
-
     @Query("SELECT * FROM Сontainer")
     fun getContainers(): List<Сontainer>
     @Insert

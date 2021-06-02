@@ -7,10 +7,7 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Message
 import android.view.Window
-import android.widget.CheckBox
-import android.widget.CompoundButton
-import android.widget.EditText
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.DialogFragment
 
 
@@ -39,9 +36,43 @@ object ViewDialog {
         }
         dialog.show()
     }
+
+    fun showCreateCalculationDialog (context: Context, msg: String, positiveAction: (name: String)->Unit) {
+        val dialog = Dialog(context)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.create_calculates_dialog)
+
+        val editText =dialog.findViewById<EditText>(R.id.name)
+        var name: String?=null
+
+        val message =dialog.findViewById<TextView>(R.id.message)
+        message.text=msg
+
+        val ok=dialog.findViewById<TextView>(R.id.ok)
+        ok.setOnClickListener {
+            name=editText.text.toString()
+
+            if (name==null || name==""){
+                Loger.log("$name Введите имя")
+                Toast.makeText(context,"Введите имя", Toast.LENGTH_SHORT).show()
+            }else {
+                Loger.log("$name")
+                positiveAction(name!!)
+                dialog.dismiss()
+            }
+        }
+
+        val cancel=dialog.findViewById<TextView>(R.id.cancel)
+        cancel.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
 }
+
 class SimpleDialogFragment(
-        val message: String,
+        val message: String?,
         val positiveFunction: ()-> Unit,
         val navigate: ()->Unit
         ):DialogFragment(){

@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
     var navController: NavController? = null
     private lateinit var appBarConfiguration: AppBarConfiguration
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView<ActivityMainBinding>(this, R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))

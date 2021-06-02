@@ -22,6 +22,7 @@
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
+
             <androidx.appcompat.widget.AppCompatSpinner
                 android:gravity="center_horizontal"
                 android:id="@+id/spinner_length"
@@ -31,6 +32,18 @@
                 android:textSize="14sp"
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"/>
+
+            <TextView
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="dfhrt"
+                android:background="@drawable/ic_background_green"
+                android:id="@+id/spinner_text"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
         </FrameLayout>
         <TextView
 
