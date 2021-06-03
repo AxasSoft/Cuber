@@ -10,7 +10,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import dagger.hilt.android.AndroidEntryPoint
 import ru.wood.cuber.databinding.ActivityMainBinding
 
-
+//Remires
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     var navController: NavController? = null
