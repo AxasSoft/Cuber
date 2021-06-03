@@ -25,7 +25,7 @@ class TreesViewModel @Inject constructor (
         ) : BaseViewModel () {
     var liveData = MutableLiveData<List<TreePosition>>()
     var onePositionLiveData = MutableLiveData<TreePosition>()
-    var quantityChangingLiveData= MutableLiveData<Boolean>()
+    var paramsIsSaved= MutableLiveData<Boolean>()
 
     var commonСontainerId: Long?=null
     var commonLength: Double?=null
@@ -136,7 +136,7 @@ class TreesViewModel @Inject constructor (
             }
         }
     }
-    fun changeParams(
+    fun saveNewParams(
             lastLength: Double,
             lastdiameter: Int,
             newLength: Double,
@@ -163,7 +163,9 @@ class TreesViewModel @Inject constructor (
     private fun update(newParams: NewParams){
             updateParams(newParams){
                 if (it){
-                    refreshList(commonСontainerId!!)
+                    Loger.log("paramsIsSaved.value=true ---------------------------")
+                    paramsIsSaved.value=true
+                    //refreshList(commonСontainerId!!)
 
             }
         }

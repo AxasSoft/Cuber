@@ -81,7 +81,7 @@ class TreeRedactFragment : Fragment() {
         val toolbar=binding.toolbar.apply {
             setNavigationIcon(R.drawable.ic_left)
             isClickable
-            toolbarClickListener(this)
+            backClickListener(this)
         }
 
         val id=arguments?.getLong("id")
@@ -95,12 +95,17 @@ class TreeRedactFragment : Fragment() {
                     onePositionLiveData.value=null
                 }
             })
-            quantityChangingLiveData.observe(viewLifecycleOwner,{
-                it.let {
-                    changeParams()
+            paramsIsSaved.observe(requireActivity(),{
+                it?.let {
+                    if(it){
+                        when(quantityIsChanged()){
+                            true->letSavingQuantity2(comparisonQuantity())
+                            else->viewModel.refreshList(commonСontainerId!!)
+                        }
+                    }
+                    paramsIsSaved.value=null
                 }
             })
-
         }
         return view
     }
@@ -138,37 +143,63 @@ class TreeRedactFragment : Fragment() {
         Loger.log(quantity.toString())
     }
 
-    private fun toolbarClickListener(toolbar: MaterialToolbar){
+    private fun backClickListener(toolbar: MaterialToolbar){
         toolbar.setOnClickListener {
-            if (changeQuantity()){
-                when(comparisonQuantity()){
-                    INCREASE->{ val count =Param.newQuantity-Param.lastQuantity   //увеличение +1
-                        quitDialog {viewModel.addPositions(
-                                count = count,
-                                diameter = Param.newDiameter,
-                                length = Param.newLength) }}
-                    DECREASE->{                                                  //уменьшение -1
-                        val limit= Param.lastQuantity-Param.newQuantity
-                        quitDialog {viewModel.limitDelete(
-                                diameter =  Param.newDiameter,
-                                length = Param.newLength,
-                                limit = limit)  }}
-
+            when {
+                paramsIsChaged() -> {
+                    letSavingParams()
                 }
-            }else if (changeIsTrue()){
-                Loger.log("changeParams")
-                quitDialog { changeParams()}
-            } else{
-                Navigation.findNavController(it).popBackStack()
+                quantityIsChanged() -> {
+                    letSavingQuantity(comparisonQuantity())
+                }
+                else -> {
+                    Navigation.findNavController(it).popBackStack()
+                }
             }
         }
     }
-    private fun changeParams(){
-        viewModel.changeParams(
+
+    private fun letSavingParams(){
+        quitDialog {
+            viewModel.saveNewParams(
                 lastdiameter = Param.lastDiameter,
                 lastLength = Param.lastLength,
                 newDiameter =  Param.newDiameter,
                 newLength = Param.newLength )
+        }
+    }
+
+    private fun letSavingQuantity(comparisonResult : Int){
+        when(comparisonResult){
+            INCREASE->{ val count =Param.newQuantity-Param.lastQuantity   //увеличение +1
+                quitDialog {viewModel.addPositions(
+                    count = count,
+                    diameter = Param.newDiameter,
+                    length = Param.newLength) }}
+            DECREASE->{                                                  //уменьшение -1
+                val limit= Param.lastQuantity-Param.newQuantity
+                quitDialog {viewModel.limitDelete(
+                    diameter =  Param.newDiameter,
+                    length = Param.newLength,
+                    limit = limit)  }}
+
+        }
+    }
+    private fun letSavingQuantity2(comparisonResult : Int){
+        when(comparisonResult){
+            INCREASE->{ val count =Param.newQuantity-Param.lastQuantity   //увеличение +1
+                viewModel.addPositions(
+                    count = count,
+                    diameter = Param.newDiameter,
+                    length = Param.newLength)}
+            DECREASE->{                                                  //уменьшение -1
+                val limit= Param.lastQuantity-Param.newQuantity
+                viewModel.limitDelete(
+                    diameter =  Param.newDiameter,
+                    length = Param.newLength,
+                    limit = limit)}
+
+        }
     }
 
     private fun quitDialog(positiveFunction: ()-> Unit){
@@ -196,13 +227,13 @@ class TreeRedactFragment : Fragment() {
         }
     }
 
-    private fun changeQuantity(): Boolean{
+    private fun quantityIsChanged(): Boolean{
         Param.apply {
             return !(lastQuantity== newQuantity)
         }
     }
 
-    private fun changeIsTrue() : Boolean{
+    private fun paramsIsChaged() : Boolean{
         Param.apply {
             return !(lastLength== newLength &&
                     lastDiameter== newDiameter)
