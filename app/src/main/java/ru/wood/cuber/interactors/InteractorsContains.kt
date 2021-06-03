@@ -39,7 +39,7 @@ class DeleteOneContain @Inject constructor(val repository: RepositoryContains): 
     }
 }
 
-class DeleteContainerContent @Inject constructor(val repository: RepositoryContains): UseCase<Boolean, Long>() {
+class ClearOneCalculate @Inject constructor(val repository: RepositoryContains): UseCase<Boolean, Long>() {
 
     override suspend fun run(params: Long): Boolean {
         val ok = repository.deleteContent(params)

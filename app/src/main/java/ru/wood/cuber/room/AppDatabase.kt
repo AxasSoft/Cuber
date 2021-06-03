@@ -13,7 +13,7 @@ const val DATABASE_NAME = "cuber-db"
     MyCalculatesContentsTab::class,
     TreePosition::class,
     MyСontainer::class,
-    MyCalculation::class], version = 2)
+    MyCalculation::class], version = 1)
 abstract class AppDatabase: RoomDatabase() {
     abstract fun daoTrees(): DaoTrees
     abstract fun daoCalculates(): DaoMyCalculates

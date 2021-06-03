@@ -11,7 +11,7 @@ import ru.wood.cuber.R
 import ru.wood.cuber.databinding.FragmentDiametr2Binding
 import ru.wood.cuber.view_models.TreesViewModel
 
-class Diametr2 : Fragment(), View.OnClickListener {
+class Diametr2 : Fragment() {
     private val viewModel: TreesViewModel by activityViewModels()
     var diametr: Int?=null
 
@@ -22,14 +22,13 @@ class Diametr2 : Fragment(), View.OnClickListener {
         val binding = FragmentDiametr2Binding.inflate(inflater)
         val view=binding.root
         binding.fragment=this
-        binding.setOnClikListener=this
 
         return view
     }
 
-    override fun onClick(v: View?) {
-        when(view?.id){
-            R.id.length_36-> diametr=36
+    fun click_add (view:View){
+        when(view.id){
+            R.id.length_36->diametr=36
             R.id.length_37->diametr=37
             R.id.length_38->diametr=38
             R.id.length_39->diametr=39

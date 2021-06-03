@@ -1,6 +1,5 @@
 package ru.wood.cuber.ui
 
-import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.*
@@ -8,14 +7,13 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.daimajia.swipe.SwipeLayout
 import dagger.hilt.android.AndroidEntryPoint
 import ru.wood.cuber.Loger
 import ru.wood.cuber.R
-import ru.wood.cuber.Util
+import ru.wood.cuber.Utill
 import ru.wood.cuber.ViewDialog
 import ru.wood.cuber.adapters.RecyclerCallback
 import ru.wood.cuber.adapters.SimpleRecyclerAdapter
@@ -38,6 +36,7 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         currentPositionLength=1
+        navController= Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
     }
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -47,54 +46,38 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
         actionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
         }
-
         val binding=FragmentTreesBinding.inflate(inflater)
         binding.textView1.paintFlags = binding.textView1.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-        navController= Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
         val view= binding.root
         val recycler=binding.recycler
+        val spinnerLength : Spinner = binding.spinnerLength
         spinnerText=binding.spinnerText
 
-        val spinnerLength : Spinner? = binding.spinnerLength
-
         val lengths :List<String> = ArrayList<String>().addSpinnerList(
-                Util.LENGTHS
+                Utill.LENGTHS
         )
 
-        spinnerLength?.apply {
+        spinnerLength.apply {
             setAdapter(lengths)
-            setSelection(currentPositionLength)
+            applyNewLength(this@apply,lengths )
+
             onItemSelectedListener = object :AdapterView.OnItemSelectedListener{
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    spinnerText.text = lengths[position] + "м"
-/*
-                    (parent?.getChildAt(0) as TextView?)?.apply {
-                        setTextColor(Color.WHITE)
-                        textSize = 14f
-                        text="$text м"
-                    }*/
 
                     if (position!=currentPositionLength){
                         ViewDialog.showDialogOfLength(context,
-                                {
-                                    currentPositionLength = position
-                                    Loger.log(position)
-                                }, {
-                            setSelection(currentPositionLength)
-                        }
+                                positiveAction={currentPositionLength = position},
+                                commonAction={applyNewLength(this@apply,lengths )},
+                                checkBoxAction={viewModel.changeCommonLength(Utill.LENGTHS[position], idOfContain)}
                         )
                     }
-
-                    viewModel.commonLength=Util.LENGTHS[currentPositionLength]
                 }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-
-                }
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
         }
 
         idOfContain= arguments?.getLong("id")
+
         with(viewModel){
             commonСontainerId=idOfContain
             refreshList(commonСontainerId!!)
@@ -109,13 +92,14 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
                                         itemView: View
                                 ) {
                                     swipeHolderAction(binder, entity, position, itemView)
-                                    subscribeClickPosition(binder.include.clicableLayout, entity.id)
+                                    subscribeClickPosition(binder.include.clicableLayout, entity)
                                 }
                             })
                     recycler.adapter = adapter
                     adapter!!.notifyDataSetChanged()
 
                     actionBar?.title = "name"
+                    liveData.value=null
                 }
             })
         }
@@ -125,14 +109,6 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
 
     fun backStack(){
         navController?.popBackStack()
-    }
-
-    fun subscribeClickPosition(clicableLayout: View, idPosition: Long){
-        clicableLayout.setOnClickListener {
-            val bundle= Bundle()
-            bundle.putLong("id", idPosition)
-            navController?.navigate(R.id.action_treesFragment_to_treeRedactFragment, bundle)
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -153,6 +129,25 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
     override fun onPositionClick(view: View, id: Int) {
 
     }
+
+    private fun subscribeClickPosition(clicableLayout: View, entity: TreePosition){
+        clicableLayout.setOnClickListener {
+            val bundle= Bundle()
+            bundle.putLong("id", entity.id)
+            bundle.putInt("quantity",entity.quantity)
+            Loger.log("•••• "+entity.quantity)
+            navController?.navigate(R.id.action_treesFragment_to_treeRedactFragment, bundle)
+        }
+    }
+
+    private fun applyNewLength(spinner: Spinner , lengths :List<String>){
+        currentPositionLength.let {
+            spinner.setSelection(it)
+            spinnerText.text = lengths[it] + "м"
+            viewModel.commonLength=Utill.LENGTHS[it]
+        }
+    }
+
     private fun swipeHolderAction(
             binder: ItemTreesSwipeBinding,
             entity: TreePosition,
@@ -182,7 +177,7 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
 
             Delete.setOnClickListener(View.OnClickListener { v ->
                 //viewModel.deleteExactly(list[position].id) //Удаление из БД
-                viewModel.deltePosition(entity, idOfContain!!)
+                viewModel.deletePosition(entity, idOfContain!!)
 
                 adapter!!.apply {
                     mItemManger.removeShownLayouts(binder.swipe)
@@ -201,12 +196,14 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
         }
         adapter!!.mItemManger.bindView(itemView, position)
     }
+
     private fun <T : Number> ArrayList<String>.addSpinnerList(numbers: List<T>): MutableList<String>{
         for (item: T in numbers){
             this.add(item.toString())
         }
         return this
     }
+
     private fun Spinner.setAdapter(list: List<String>){
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
                 requireContext(),

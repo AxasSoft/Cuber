@@ -12,26 +12,31 @@ import androidx.fragment.app.DialogFragment
 
 
 object ViewDialog {
-    fun showDialogOfLength(context: Context, positiveAction: ()->Unit, negativeAction: ()-> Unit ) {
+    fun showDialogOfLength(context: Context, positiveAction: ()->Unit, commonAction: ()-> Unit, checkBoxAction: ()-> Unit) {
         val dialog = Dialog(context)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
         dialog.setContentView(R.layout.length_dialog)
+        var commonLength = false
 
         val checkBox =dialog.findViewById<CheckBox>(R.id.checkbox)
         checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
-
+            commonLength=isChecked
         }
 
         val ok=dialog.findViewById<TextView>(R.id.ok)
         ok.setOnClickListener {
             positiveAction()
+            if (commonLength){
+                checkBoxAction()
+            }
+            commonAction()
             dialog.dismiss()
         }
 
         val cancel=dialog.findViewById<TextView>(R.id.cancel)
         cancel.setOnClickListener {
-            negativeAction()
+            commonAction()
             dialog.dismiss()
         }
         dialog.show()

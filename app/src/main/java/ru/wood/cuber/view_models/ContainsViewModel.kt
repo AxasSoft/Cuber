@@ -14,6 +14,7 @@ class ContainsViewModel @Inject constructor (
         private val saveContent: SaveContent,
         private val loadlist: LoadContains,
         private val deleteOne: DeleteOneContain,
+        private val deleteTrees: ClearOneContain
 
         ) : BaseViewModel() {
 
@@ -55,7 +56,11 @@ class ContainsViewModel @Inject constructor (
         deleteOne(one){
             if (it){
                 refreshList(idOfCalculates)
+                clearTreesContent(one.id)
             }
         }
+    }
+    private fun clearTreesContent(idOfContainers: Long){
+        deleteTrees(idOfContainers)
     }
 }

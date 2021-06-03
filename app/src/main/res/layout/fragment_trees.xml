@@ -36,7 +36,7 @@
             <TextView
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="dfhrt"
+                android:text=""
                 android:background="@drawable/ic_background_green"
                 android:id="@+id/spinner_text"
                 android:textColor="@color/white"

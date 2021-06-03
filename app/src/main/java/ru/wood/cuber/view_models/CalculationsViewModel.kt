@@ -15,7 +15,7 @@ class CalculationsViewModel @Inject constructor(
         private val loadlist: LoadCalculatesList,
         private val save: SaveOneCalculate,
         private val delete: DeleteOneCalculate,
-        private val deleteContaines: DeleteContainerContent
+        private val deleteContaines: ClearOneCalculate
         ) :BaseViewModel() {
 
     var liveData = MutableLiveData<List<MyCalculation>>()

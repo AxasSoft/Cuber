@@ -6,9 +6,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil.setContentView
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
 import dagger.hilt.android.AndroidEntryPoint
 import ru.wood.cuber.databinding.ActivityMainBinding
 
@@ -31,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         for (x in 16..51 ){
-            Util.DIAMETERS?.add(x)
+            Utill.DIAMETERS?.add(x)
         }
     }
 }

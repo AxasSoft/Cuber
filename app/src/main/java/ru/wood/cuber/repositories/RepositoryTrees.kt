@@ -11,32 +11,42 @@ import javax.inject.Inject
 class RepositoryTrees @Inject constructor(val dao: DaoTrees) {
 
     fun getListTreesForExample() : List<TreePosition>{
-        val tree1= TreePosition(1, 5.0, 18.0, 3, 0.651)
-        val tree2= TreePosition(2, 5.0, 18.0, 7, 0.951)
-        val tree3= TreePosition(3, 5.0, 20.0, 5, 0.751)
-        val tree4= TreePosition(4, 8.0, 18.0, 3, 0.651)
-        val tree5= TreePosition(5, 5.0, 21.0, 5, 0.251)
-        val tree6= TreePosition(6, 5.0, 24.0, 3, 0.751)
-        val tree7= TreePosition(7, 5.0, 30.0, 2, 0.651)
+        val tree1= TreePosition(1, 5.0, 18,  0.651,)
+        val tree2= TreePosition(2, 5.0, 18,  0.951)
+        val tree3= TreePosition(3, 5.0, 20,  0.751)
+        val tree4= TreePosition(4, 8.0, 18,  0.651)
+        val tree5= TreePosition(5, 5.0, 21, 0.251)
+        val tree6= TreePosition(6, 5.0, 24,  0.751)
+        val tree7= TreePosition(7, 5.0, 30,  0.651)
 
         val list: List<TreePosition> = arrayListOf(tree1,tree2,tree3,tree4,tree5,tree6,tree7);
         return list
     }
-
+    fun getOne(id: Long): TreePosition{
+        return dao.onePositionById(id)
+    }
 
     fun saveOne(one: TreePosition): Long{
         return dao.save(one)
     }
+
+    fun saveList(list: List<TreePosition>): List<Long>{
+        return dao.saveList(list)
+    }
+
     fun saveContent(contentTab: ContainerContentsTab): Long{
         return dao.saveContentTab(contentTab)
+    }
+    fun saveContentList(contentTab: List<ContainerContentsTab>) : List<Long>{
+        return dao.saveContentTabList(contentTab)
     }
 
     fun loadList(containId: Long): List<TreePosition> {
         return dao.load(containId)
     }
 
-    fun  deleteOne(one: TreePosition): Int{
-        val resultDelete=dao.delete(one)
+    fun  delete(length: Double?, diameter: Int?): Int{
+        val resultDelete=dao.delete(length,diameter)
         Loger.log("resultDelete = $resultDelete")
         return resultDelete
     }
@@ -44,5 +54,16 @@ class RepositoryTrees @Inject constructor(val dao: DaoTrees) {
         val resultContentDelete = dao.deleteContent(idOfContainer)
         Loger.log("resultContentDelete = $resultContentDelete")
         return resultContentDelete
+    }
+    fun updateLength(currentContainer: Long, newLength: Double): Int{
+        return dao.updateLength(currentContainer, newLength)
+    }
+
+    fun updatePositions(currentContainer: Long, newDiameter: Int,newLength: Double): Int{
+        return dao.updatePositions(currentContainer, newDiameter, newLength)
+    }
+
+    fun deleteByLimit(diameter: Int, length: Double, limit: Int) : Int{
+        return dao.deleteByLimit(diameter, length, limit)
     }
 }
