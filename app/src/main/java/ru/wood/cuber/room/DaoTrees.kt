@@ -42,8 +42,6 @@ interface DaoTrees {
     @Query("UPDATE TreePosition SET length = :newLength  WHERE id IN (SELECT idOfTreePosition FROM ContainerContentsTab WHERE idOfContainer=:currentContainer) ")
     fun updateLength(currentContainer: Long, newLength: Double): Int
 
-    /*@Query("UPDATE TreePosition SET length = :newLength, diameter=:newDiameter  WHERE id IN (SELECT idOfTreePosition FROM ContainerContentsTab WHERE idOfContainer=:currentContainer) ")
-    fun updatePositions(currentContainer: Long, newDiameter: Int,newLength: Double): Int*/
 
     @Query("SELECT * FROM TreePosition WHERE id=:id")
     fun onePositionById(id: Long): TreePosition
@@ -51,4 +49,12 @@ interface DaoTrees {
 
     @Query("DELETE FROM TreePosition WHERE id IN (SELECT id FROM TreePosition WHERE (TreePosition.diameter=:diameter AND TreePosition.length=:length) LIMIT :limit)")
     fun deleteByLimit(diameter: Int, length: Double, limit: Int): Int
+
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   /* @Query("UPDATE TreePosition SET length = :newLength, diameter=:newDiameter  WHERE id IN (:idList) ")
+    fun updatePositions(currentContainer: Long, newDiameter: Int,newLength: Double, idList :List<Long>): Int*/
+
+    @Query("SELECT id FROM TreePosition WHERE id=(SELECT idOfTreePosition FROM ContainerContentsTab WHERE idOfContainer=:currentContainer) AND diameter=:diameter AND length=:length")
+    fun getPositions (currentContainer: Long, diameter: Int, length: Double): List<Long>
+
 }

@@ -20,7 +20,8 @@ class TreesViewModel @Inject constructor (
         private val updateLength: UpdateTreeLength,
         private val updateParams: UpdateTreePositions,
         private val getOne: OnePositionById,
-        private val deleteByLimit: DeleteByLimit
+        private val deleteByLimit: DeleteByLimit,
+        private val getPosiitonList:getPositionsList
         ) : BaseViewModel () {
     var liveData = MutableLiveData<List<TreePosition>>()
     var onePositionLiveData = MutableLiveData<TreePosition>()
@@ -137,16 +138,33 @@ class TreesViewModel @Inject constructor (
         }
     }
     fun changeParams(
-            length: Double,
-            diameter: Int){
-        val newParams= NewParams(
+            lastLength: Double,
+            lastdiameter: Int,
+            newLength: Double,
+            newDiameter: Int){
+        val lastParams= NewParams(
                 containerOfTrees =commonСontainerId!!,
-                 length=length,
-                diameter=diameter
+                 length=lastLength,
+                diameter=lastdiameter
         )
-        updateParams(newParams){
-            if (it){
-                refreshList(commonСontainerId!!)
+        getPosiitonList(lastParams){
+            Loger.log(it+" ☻☻☻☻▐---------------")
+
+            val newParams=NewParams(
+                    containerOfTrees=commonСontainerId!!,
+                    length = newLength,
+                    diameter = newDiameter,
+                    idList = it
+            )
+            update(newParams)
+        }
+    }
+
+    private fun update(newParams: NewParams){
+            updateParams(newParams){
+                if (it){
+                    refreshList(commonСontainerId!!)
+
             }
         }
     }

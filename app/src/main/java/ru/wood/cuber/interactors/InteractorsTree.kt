@@ -78,12 +78,14 @@ class UpdateTreeLength @Inject constructor(val repository: RepositoryTrees): Use
     }
 }
 
-class UpdateTreePositions @Inject constructor(val repository: RepositoryTrees): UseCase<Boolean, NewParams>() {
+class UpdateTreePositions @Inject constructor(val repository: RepositoryTrees): UseCase<Boolean,  NewParams>() {
     override suspend fun run(params: NewParams): Boolean{
         val container=params.containerOfTrees
         val diameter=params.diameter
-        val length=params.length
-        val ok = repository.updatePositions(container,diameter!!,length)
+        val length =params.length
+        val list =params.idList
+
+        val ok = repository.updatePositions(container,diameter!!,length,list!!)
         return ok>0
     }
 }
@@ -102,5 +104,13 @@ class DeleteByLimit @Inject constructor(val repository: RepositoryTrees): UseCas
         Loger.log(limit)
         val ok=repository.deleteByLimit(diameter, length, limit)
         return ok>0
+    }
+}
+class getPositionsList @Inject constructor(val repository: RepositoryTrees) : UseCase<List<Long>, NewParams>() {
+    override suspend fun run(params: NewParams): List<Long> {
+        val diameter=params.diameter
+        val length =params.length
+        val container =params.containerOfTrees
+        return repository.idList(container,diameter!!,length)
     }
 }

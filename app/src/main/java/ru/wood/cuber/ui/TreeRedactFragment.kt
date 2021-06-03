@@ -97,10 +97,7 @@ class TreeRedactFragment : Fragment() {
             })
             quantityChangingLiveData.observe(viewLifecycleOwner,{
                 it.let {
-                    viewModel.changeParams(
-                            diameter = Param.newDiameter,
-                            length = Param.newLength
-                    )
+                    changeParams()
                 }
             })
 
@@ -167,8 +164,10 @@ class TreeRedactFragment : Fragment() {
     }
     private fun changeParams(){
         viewModel.changeParams(
-                diameter = Param.newDiameter,
-                length = Param.newLength )
+                lastdiameter = Param.lastDiameter,
+                lastLength = Param.lastLength,
+                newDiameter =  Param.newDiameter,
+                newLength = Param.newLength )
     }
 
     private fun quitDialog(positiveFunction: ()-> Unit){

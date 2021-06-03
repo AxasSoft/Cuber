@@ -59,11 +59,16 @@ class RepositoryTrees @Inject constructor(val dao: DaoTrees) {
         return dao.updateLength(currentContainer, newLength)
     }
 
-    fun updatePositions(currentContainer: Long, newDiameter: Int,newLength: Double): Int{
-        return dao.updatePositions(currentContainer, newDiameter, newLength)
+    fun updatePositions(currentContainer: Long, newDiameter: Int,newLength: Double, ids :List<Long>): Int{
+       // return dao.updatePositions(currentContainer, newDiameter,newLength, ids)
+        return 0
     }
 
     fun deleteByLimit(diameter: Int, length: Double, limit: Int) : Int{
         return dao.deleteByLimit(diameter, length, limit)
+    }
+
+    fun idList(currentContainer: Long, diameter: Int,length: Double): List<Long>{
+        return dao.getPositions(currentContainer, diameter, length)
     }
 }
