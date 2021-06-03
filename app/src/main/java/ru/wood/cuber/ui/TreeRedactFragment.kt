@@ -155,7 +155,8 @@ class TreeRedactFragment : Fragment() {
                                 limit = limit)  }}
 
                 }
-            }else if (changeParam()){
+            }else if (changeIsTrue()){
+                Loger.log("changeParams")
                 quitDialog { changeParams()}
             } else{
                 Navigation.findNavController(it).popBackStack()
@@ -201,7 +202,7 @@ class TreeRedactFragment : Fragment() {
         }
     }
 
-    private fun changeParam() : Boolean{
+    private fun changeIsTrue() : Boolean{
         Param.apply {
             return !(lastLength== newLength &&
                     lastDiameter== newDiameter)

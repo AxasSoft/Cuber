@@ -21,7 +21,7 @@ class TreesViewModel @Inject constructor (
         private val updateParams: UpdateTreePositions,
         private val getOne: OnePositionById,
         private val deleteByLimit: DeleteByLimit,
-        private val getPosiitonList:getPositionsList
+        private val getPosiitonList:GetPositionsList
         ) : BaseViewModel () {
     var liveData = MutableLiveData<List<TreePosition>>()
     var onePositionLiveData = MutableLiveData<TreePosition>()
@@ -65,7 +65,6 @@ class TreesViewModel @Inject constructor (
                 idOfContainer = idOfContain,
                 idOfTreePosition = idOfTree
         )){ contentSaved ->
-            Loger.log(idOfTree.toString()+"☻☻")
             if(contentSaved){
                 refreshList(idOfContain)
             }
@@ -148,7 +147,8 @@ class TreesViewModel @Inject constructor (
                 diameter=lastdiameter
         )
         getPosiitonList(lastParams){
-            Loger.log(it+" ☻☻☻☻▐---------------")
+            Loger.log("${lastParams.containerOfTrees} +${lastParams.length}+ ${lastParams.diameter!!}  ☻☻☻☻▐---------------")
+            Loger.log(it.size.toString()+" ☻☻☻☻▐---------------")
 
             val newParams=NewParams(
                     containerOfTrees=commonСontainerId!!,

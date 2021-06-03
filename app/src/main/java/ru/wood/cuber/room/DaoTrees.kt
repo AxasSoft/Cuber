@@ -51,10 +51,10 @@ interface DaoTrees {
     fun deleteByLimit(diameter: Int, length: Double, limit: Int): Int
 
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   /* @Query("UPDATE TreePosition SET length = :newLength, diameter=:newDiameter  WHERE id IN (:idList) ")
-    fun updatePositions(currentContainer: Long, newDiameter: Int,newLength: Double, idList :List<Long>): Int*/
+    @Query("UPDATE TreePosition SET length = :newLength, diameter=:newDiameter  WHERE id IN (:idList) ")
+    fun updatePositions(newDiameter: Int,newLength: Double, idList :List<Long>): Int
 
-    @Query("SELECT id FROM TreePosition WHERE id=(SELECT idOfTreePosition FROM ContainerContentsTab WHERE idOfContainer=:currentContainer) AND diameter=:diameter AND length=:length")
+    @Query("SELECT id FROM TreePosition WHERE id IN(SELECT idOfTreePosition FROM ContainerContentsTab WHERE idOfContainer=:currentContainer) AND diameter=:diameter AND length=:length")
     fun getPositions (currentContainer: Long, diameter: Int, length: Double): List<Long>
 
 }
