@@ -9,8 +9,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
 import dagger.hilt.android.AndroidEntryPoint
 import ru.wood.cuber.databinding.ActivityMainBinding
-
-//Remires
+//Ramires
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     var navController: NavController? = null
