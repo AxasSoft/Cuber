@@ -16,8 +16,8 @@ import com.google.android.material.appbar.MaterialToolbar
 import dagger.hilt.android.AndroidEntryPoint
 import ru.wood.cuber.R
 import ru.wood.cuber.SimpleDialogFragment2
-import ru.wood.cuber.utill.Utill.BUNDLE_ID
 import ru.wood.cuber.databinding.FragmentContainerRedactBinding
+import ru.wood.cuber.utill.Utill.BUNDLE_CONTAINER_ID
 import ru.wood.cuber.view_models.ContainRedactViewModel
 @AndroidEntryPoint
 class ContainerRedactFragment : Fragment() {
@@ -37,7 +37,7 @@ class ContainerRedactFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        idOfContain=arguments?.getLong(BUNDLE_ID)
+        idOfContain=arguments?.getLong(BUNDLE_CONTAINER_ID)
     }
 
     override fun onCreateView(

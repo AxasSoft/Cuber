@@ -108,12 +108,11 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
     </LinearLayout>
-    <fragment
+    <FrameLayout
         android:layout_gravity="bottom"
         android:layout_marginBottom="@dimen/margin_min"
         android:id="@+id/diametr_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:name="ru.wood.cuber.ui.diametrs.DiametrContainer"/>
+        android:layout_height="wrap_content"/>
 </FrameLayout>
 </layout>

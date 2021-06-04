@@ -7,11 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import ru.wood.cuber.Loger
 import ru.wood.cuber.R
 import ru.wood.cuber.databinding.FragmentDiametr1Binding
 import ru.wood.cuber.view_models.TreesViewModel
 
-class Diametr1 : Fragment() {
+class Diametr1 : DiametrContainer() {
     private val viewModel: TreesViewModel by activityViewModels()
     var diametr: Int?=null
 
@@ -22,6 +23,7 @@ class Diametr1 : Fragment() {
         val binding = FragmentDiametr1Binding.inflate(inflater)
         val view=binding.root
         binding.fragment=this
+
 
         return view
     }
@@ -49,6 +51,6 @@ class Diametr1 : Fragment() {
             R.id.length_34->diametr=34
             R.id.length_35->diametr=35
         }
-        viewModel.addNew(diametr)
+        viewModel.addNew(getContainer(), diametr)
     }
 }

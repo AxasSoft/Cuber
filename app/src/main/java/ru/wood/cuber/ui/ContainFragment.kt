@@ -19,7 +19,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.wood.cuber.Loger
-import ru.wood.cuber.utill.Utill.BUNDLE_ID
 import ru.wood.cuber.ViewDialog
 import ru.wood.cuber.adapters.RecyclerCallback
 import ru.wood.cuber.adapters.SwipeRecyclerAdapter2
@@ -29,6 +28,7 @@ import ru.wood.cuber.databinding.ItemContainerSwipeBinding
 import ru.wood.cuber.interactors.CommonQuantity
 import ru.wood.cuber.repositories.RepositoryContains
 import ru.wood.cuber.room.AppDatabase
+import ru.wood.cuber.utill.Utill.BUNDLE_CONTAINER_ID
 
 @AndroidEntryPoint
 class ContainFragment : Fragment() {
@@ -67,7 +67,7 @@ class ContainFragment : Fragment() {
         }*/
         val recycler=binding.recycler
 
-        idOfCalculate= arguments?.getLong(BUNDLE_ID)
+        idOfCalculate= arguments?.getLong(BUNDLE_CONTAINER_ID)
         with(viewModel){
             idOfCalculate?.let {refreshList(it)}
             liveData.observe(viewLifecycleOwner,{
@@ -93,7 +93,7 @@ class ContainFragment : Fragment() {
                         })
                // val adapter= SwipeRecyclerAdapter_UNUSED(requireContext(),it, viewModel)
                 recycler.adapter=adapter
-                adapter.notifyDataSetChanged()
+                //adapter.notifyDataSetChanged()
             })
 
         }
@@ -128,7 +128,7 @@ class ContainFragment : Fragment() {
     fun subscribeClickPosition(clicableLayout: View, idPosition: Long){
         clicableLayout.setOnClickListener {
             val bundle= Bundle()
-            bundle.putLong(BUNDLE_ID, idPosition)
+            bundle.putLong(BUNDLE_CONTAINER_ID, idPosition)
             navController.navigate(R.id.action_containersFragment_to_treesFragment,bundle)
         }
     }
@@ -141,6 +141,7 @@ class ContainFragment : Fragment() {
             //------------------------------------------------
             lifecycleScope.launch {
                val quantity= async { withContext(Dispatchers.IO){
+                   Loger.log(viewModel.getQuantity(entity.id).toString()+"в корутинах //////////")
                    viewModel.getQuantity(entity.id) }
                }
                 textView.text=quantity.await().toString()

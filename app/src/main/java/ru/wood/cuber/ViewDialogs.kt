@@ -84,8 +84,8 @@ object ViewDialog {
 
 class SimpleDialogFragment(
         val message: String?,
-        val positiveFunction: ()-> Unit,
-        val navigate: ()->Unit
+        val positiveAction: ()-> Unit,
+        val negativeAction: ()->Unit
         ):DialogFragment(){
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -93,9 +93,9 @@ class SimpleDialogFragment(
             val builder = AlertDialog.Builder(it)
             builder.setTitle(message)
                     //.setMessage("вопрос")
-                    .setNegativeButton("Отмена"){ dialog, id ->  dialog.cancel(); navigate()
+                    .setNegativeButton("Отмена"){ dialog, id ->  dialog.cancel(); negativeAction()
                     }
-                    .setPositiveButton("Да") { dialog, id -> dialog.cancel();  positiveFunction(); navigate()
+                    .setPositiveButton("Да") { dialog, id -> dialog.cancel();  positiveAction();
                     }
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")

@@ -8,6 +8,7 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.daimajia.swipe.SwipeLayout
@@ -15,7 +16,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.wood.cuber.Loger
 import ru.wood.cuber.R
 import ru.wood.cuber.utill.Utill
-import ru.wood.cuber.utill.Utill.BUNDLE_ID
 import ru.wood.cuber.utill.Utill.BUNDLE_QUANTITY
 import ru.wood.cuber.ViewDialog
 import ru.wood.cuber.adapters.RecyclerCallback
@@ -24,6 +24,9 @@ import ru.wood.cuber.adapters.SwipeRecyclerAdapter2
 import ru.wood.cuber.data.TreePosition
 import ru.wood.cuber.databinding.FragmentTreesBinding
 import ru.wood.cuber.databinding.ItemTreesSwipeBinding
+import ru.wood.cuber.ui.diametrs.DiametrContainer
+import ru.wood.cuber.utill.Utill.BUNDLE_CONTAINER_ID
+import ru.wood.cuber.utill.Utill.BUNDLE_TREE_ID
 import ru.wood.cuber.view_models.TreesViewModel
 
 @AndroidEntryPoint
@@ -81,7 +84,7 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
                         ViewDialog.showDialogOfLength(context,
                                 positiveAction={currentPositionLength = position},
                                 commonAction={applyNewLength(this@apply,lengths )},
-                                checkBoxAction={viewModel.changeCommonLength(Utill.LENGTHS[position], idOfContain)}
+                                checkBoxAction={viewModel.changeCommonLength(Utill.LENGTHS[position], idOfContain!!)}
                         )
                     }
                 }
@@ -89,10 +92,15 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
             }
         }
 
-        idOfContain= arguments?.getLong(BUNDLE_ID)
+        idOfContain= arguments?.getLong(BUNDLE_CONTAINER_ID)
+        val diametrFrag=DiametrContainer.newInstance(idOfContain!!)
+        val transaction = childFragmentManager.beginTransaction()
+        transaction.add(R.id.diametr_container,diametrFrag).commit()
 
         with(viewModel){
             loadContainer(idOfContain!!)
+
+            Loger.log("container $idOfContain")
             containerLive.observe(viewLifecycleOwner,{
                 it?.let {
                     actionBar?.title = it.name
@@ -100,11 +108,10 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
                 }
             })
 
-
-            commonСontainerId=idOfContain
-            refreshList(commonСontainerId!!)
+            refreshList(idOfContain!!)
             liveData.observe(viewLifecycleOwner, {
                 it?.let {
+                    Loger.log(it)
                     adapter = SwipeRecyclerAdapter2(it, R.layout.item_trees_swipe,
                             object : RecyclerCallback<ItemTreesSwipeBinding, TreePosition> {
                                 override fun bind(
@@ -136,7 +143,7 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
         Loger.log("click")
         idOfContain?.let {
             val bundle= Bundle()
-            bundle.putLong(BUNDLE_ID,it)
+            bundle.putLong(BUNDLE_CONTAINER_ID,it)
             navController?.navigate(R.id.action_treesFragment_to_resultFragment,bundle)
         }
     }
@@ -153,7 +160,7 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
             }
             R.id.redact -> {
                 val bundle = Bundle()
-                bundle.putLong(BUNDLE_ID, idOfContain!!)
+                bundle.putLong(BUNDLE_CONTAINER_ID, idOfContain!!)
                 navController?.navigate(R.id.action_treesFragment_to_containerRedactFragment,bundle)
                 return true
             }
@@ -169,7 +176,8 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
     private fun subscribeClickPosition(clicableLayout: View, entity: TreePosition){
         clicableLayout.setOnClickListener {
             val bundle= Bundle()
-            bundle.putLong(BUNDLE_ID, entity.id)
+            bundle.putLong(BUNDLE_CONTAINER_ID,idOfContain!!)
+            bundle.putLong(BUNDLE_TREE_ID, entity.id)
             bundle.putInt(BUNDLE_QUANTITY,entity.quantity)
             Loger.log("•••• "+entity.quantity)
             navController?.navigate(R.id.action_treesFragment_to_treeRedactFragment, bundle)

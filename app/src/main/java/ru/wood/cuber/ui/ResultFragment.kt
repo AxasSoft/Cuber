@@ -11,12 +11,12 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import dagger.hilt.android.AndroidEntryPoint
 import ru.wood.cuber.R
-import ru.wood.cuber.utill.Utill.BUNDLE_ID
 import ru.wood.cuber.adapters.CommonRecyclerAdapter
 import ru.wood.cuber.adapters.RecyclerCallback
 import ru.wood.cuber.data.TreePosition
 import ru.wood.cuber.databinding.FragmentResultBinding
 import ru.wood.cuber.databinding.ItemResultPositionBinding
+import ru.wood.cuber.utill.Utill.BUNDLE_CONTAINER_ID
 import ru.wood.cuber.view_models.ResultViewModel
 
 @AndroidEntryPoint
@@ -29,7 +29,7 @@ class ResultFragment : Fragment() {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         navController= Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
-        idOfContain=arguments?.getLong(BUNDLE_ID)
+        idOfContain=arguments?.getLong(BUNDLE_CONTAINER_ID)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

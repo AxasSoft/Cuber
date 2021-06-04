@@ -12,13 +12,13 @@ import androidx.navigation.fragment.NavHostFragment.findNavController
 import com.daimajia.swipe.SwipeLayout
 import dagger.hilt.android.AndroidEntryPoint
 import ru.wood.cuber.R
-import ru.wood.cuber.utill.Utill.BUNDLE_ID
 import ru.wood.cuber.ViewDialog
 import ru.wood.cuber.adapters.RecyclerCallback
 import ru.wood.cuber.adapters.SwipeRecyclerAdapter2
 import ru.wood.cuber.data.MyOrder
 import ru.wood.cuber.databinding.FragmentMyOrderBinding
 import ru.wood.cuber.databinding.ItemCalculateSwipeBinding
+import ru.wood.cuber.utill.Utill.BUNDLE_CONTAINER_ID
 import ru.wood.cuber.view_models.OrderViewModel
 
 @AndroidEntryPoint
@@ -84,7 +84,7 @@ class MyOrderFragment : Fragment() {
     fun subscribeClickPosition(clicableLayout: View, idPosition: Long){
         clicableLayout.setOnClickListener {
             val bundle= Bundle()
-            bundle.putLong(BUNDLE_ID, idPosition)
+            bundle.putLong(BUNDLE_CONTAINER_ID, idPosition)
             navController.navigate(R.id.action_myCalculationsFragment_to_containersFragment,bundle)
         }
     }

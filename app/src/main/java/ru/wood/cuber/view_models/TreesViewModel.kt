@@ -11,24 +11,15 @@ import javax.inject.Inject
 @HiltViewModel
 class TreesViewModel @Inject constructor (
         private val save: SaveOneTree,
-        private val saveList: SaveListTree,
         private val saveContent: SaveTreeContent,
-        private val saveMoreContent: SaveTreeContentList,
         private val loadlist: LoadTrees,
         private val deleteOne: DeleteOneTree,
         private val updateLength: UpdateTreeLength,
-        private val updateParams: UpdateTreePositions,
-        private val getOne: OnePositionById,
-        private val deleteByLimit: DeleteByLimit,
-        private val getPosiitonList:GetPositionsList,
         private val loadOneContainer:LoadOne
         ) : BaseViewModel () {
     var liveData = MutableLiveData<List<TreePosition>>()
     var containerLive = MutableLiveData<MyСontainer>()
-    var onePositionLiveData = MutableLiveData<TreePosition>()
-    var paramsIsSaved= MutableLiveData<Boolean>()
 
-    var commonСontainerId: Long?=null
     var commonLength: Double?=null
 
     fun refreshList(idOfContain: Long){
@@ -38,7 +29,7 @@ class TreesViewModel @Inject constructor (
         }
     }
     
-    fun addNew(diameter: Int?){
+    fun addNew(container: Long, diameter: Int?){
         val one = TreePosition(
                 length = commonLength!!,
                 diameter = diameter
@@ -48,7 +39,7 @@ class TreesViewModel @Inject constructor (
             val ok=it!=0L
             if (ok){
                 saveContent(
-                        idOfContain= commonСontainerId!!,
+                        idOfContain= container,
                         idOfTree= it)
             }
         }
@@ -73,97 +64,17 @@ class TreesViewModel @Inject constructor (
         }
     }
 
-    fun changeCommonLength(length : Double, idOfContain:  Long?){
-        val newLength = NewParams(commonСontainerId!!, length)
+    fun changeCommonLength(length : Double, container:  Long){
+        val newLength = NewParams(container, length)
         updateLength(newLength){
             if (it){
-                refreshList(idOfContain!!)
+                refreshList(container)
             }
         }
     }
 
-    fun getOneTree(id: Long){
-        getOne(id){
-            onePositionLiveData.value=it
-        }
-    }
-    private fun saveContentList(idOfContain: Long,idList: List<Long>){
-        val list : MutableList<ContainerContentsTab> = ArrayList()
-        for (id in idList){
-            Loger.log("id in idList $id")
-            list.add(ContainerContentsTab(
-                    idOfContainer = idOfContain,
-                    idOfTreePosition = id
-            )
-            )
-        }
-        saveMoreContent(list){
-            Loger.log("ContainerContentsTab List  $list")
-            if (it){
-                //quantityChangingLiveData.value=true
-                refreshList(idOfContain)
-            }
-        }
-    }
 
-    fun limitDelete(diameter: Int, length: Double, limit: Int){
-        val limit=Limit(diameter, length, limit)
-        deleteByLimit(limit){
-            if (it){
-                //quantityChangingLiveData.value=true
-                refreshList(commonСontainerId!!)
-            }
-        }
-    }
 
-    fun addPositions(count: Int, length: Double, diameter: Int){
-        val list: MutableList<TreePosition> = ArrayList()
-        for (x in 1..count){
-            list.add(TreePosition(length = length, diameter =diameter ))
-        }
-
-        saveList(list){
-            val ok= it.isNotEmpty()
-            if (ok){
-                saveContentList(idOfContain =commonСontainerId!!,
-                                idList = it)
-            }
-        }
-    }
-    fun saveNewParams(
-            lastLength: Double,
-            lastdiameter: Int,
-            newLength: Double,
-            newDiameter: Int){
-        val lastParams= NewParams(
-                containerOfTrees =commonСontainerId!!,
-                 length=lastLength,
-                diameter=lastdiameter
-        )
-        getPosiitonList(lastParams){
-            Loger.log("${lastParams.containerOfTrees} +${lastParams.length}+ ${lastParams.diameter!!}  ☻☻☻☻▐---------------")
-            Loger.log(it.size.toString()+" ☻☻☻☻▐---------------")
-
-            val newParams=NewParams(
-                    containerOfTrees=commonСontainerId!!,
-                    length = newLength,
-                    diameter = newDiameter,
-                    idList = it
-            )
-            update(newParams)
-        }
-    }
-
-    private fun update(newParams: NewParams){
-            updateParams(newParams){
-                if (it){
-                    Loger.log("paramsIsSaved.value=true ---------------------------")
-                    paramsIsSaved.value=true
-                    //refreshList(commonСontainerId!!)
-
-            }
-        }
-    }
     fun loadContainer (id: Long){
         loadOneContainer(id){
             containerLive.value=it

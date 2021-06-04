@@ -8,7 +8,9 @@ object Utill {
     const val INCREASE=1
     const val DECREASE=-1
 
-    const val BUNDLE_ID="id"
+
+    const val BUNDLE_TREE_ID="treeId"
+    const val BUNDLE_CONTAINER_ID="id"
     const val BUNDLE_QUANTITY="quantity"
 
 }

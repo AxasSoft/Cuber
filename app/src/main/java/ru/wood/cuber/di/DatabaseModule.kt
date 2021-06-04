@@ -39,4 +39,8 @@ class DatabaseModule {
     fun provideDaoContainRedact(appDatabase: AppDatabase): DaoContainRedact {
         return appDatabase.daoContainRedact()
     }
+    @Provides
+    fun provideDaoTreeRedact(appDatabase: AppDatabase): DaoTreeRedact {
+        return appDatabase.daoTreeRedact()
+    }
 }

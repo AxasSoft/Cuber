@@ -9,7 +9,7 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.google.android.material.appbar.MaterialToolbar
@@ -17,7 +17,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.wood.cuber.Loger
 import ru.wood.cuber.R
 import ru.wood.cuber.SimpleDialogFragment
-import ru.wood.cuber.utill.Utill.BUNDLE_ID
 import ru.wood.cuber.utill.Utill.BUNDLE_QUANTITY
 import ru.wood.cuber.utill.Utill.DECREASE
 import ru.wood.cuber.utill.Utill.DIAMETERS
@@ -25,14 +24,18 @@ import ru.wood.cuber.utill.Utill.INCREASE
 import ru.wood.cuber.utill.Utill.LENGTHS
 import ru.wood.cuber.data.TreePosition
 import ru.wood.cuber.databinding.FragmentTreeRedactBinding
-import ru.wood.cuber.view_models.TreesViewModel
+import ru.wood.cuber.utill.Utill.BUNDLE_CONTAINER_ID
+import ru.wood.cuber.utill.Utill.BUNDLE_TREE_ID
+import ru.wood.cuber.view_models.TreeRedactViewModel
+
 @AndroidEntryPoint
 class TreeRedactFragment : Fragment() {
     private var navController: NavController? =null
     private var supportToolbar : ActionBar? =null
     private var manager: FragmentManager?=null
-    private val viewModel: TreesViewModel by activityViewModels()
+    private val viewModel: TreeRedactViewModel by viewModels()
     private var currentEntity: TreePosition?=null
+    private var idOfContain : Long? =null
 
     object Param{
         var lastLength: Double = 0.0
@@ -49,36 +52,6 @@ class TreeRedactFragment : Fragment() {
         val binding= FragmentTreeRedactBinding.inflate(inflater)
         val view =binding.root
         binding.fragment=this
-        init(binding)
-
-        val spinnerLength = binding.spinnerLength
-
-        val lengths :List<String> = ArrayList<String>().addSpinnerList(false,"Выберите длину", LENGTHS)
-        spinnerLength.setAdapter(lengths)
-        spinnerLength.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View,
-                                        position: Int, id: Long) {
-                Param.newLength=LENGTHS[position]
-            }
-
-            override fun onNothingSelected(arg0: AdapterView<*>?) {}
-        }
-
-        val spinnerDiameter = binding.spinnerDiameter
-
-        val diameters :List<String> = ArrayList<String>().addSpinnerList(false,"Выберите диаметр", DIAMETERS as List<Int>)
-        spinnerDiameter.setAdapter(diameters)
-        spinnerDiameter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View,
-                                        position: Int, id: Long) {
-                Param.newDiameter= DIAMETERS!![position]
-            }
-
-            override fun onNothingSelected(arg0: AdapterView<*>?) {}
-        }
-
-        val editText=binding.editText
-
 
         val toolbar=binding.toolbar.apply {
             setNavigationIcon(R.drawable.ic_left)
@@ -86,8 +59,15 @@ class TreeRedactFragment : Fragment() {
             backClickListener(this)
         }
 
-        val id=arguments?.getLong(BUNDLE_ID)
+        commonInit(binding)
+        val spinnerLength = spinnerLengthInit(binding)
+        val spinnerDiameter = spinnerDiameterInit(binding)
+
+        idOfContain=arguments?.getLong(BUNDLE_CONTAINER_ID)
+        val id=arguments?.getLong(BUNDLE_TREE_ID)
         val quantity=arguments?.getInt(BUNDLE_QUANTITY)
+        val editText=binding.editText
+
         with(viewModel){
             id?.let { getOneTree(it) }
             onePositionLiveData.observe(viewLifecycleOwner,{
@@ -97,19 +77,29 @@ class TreeRedactFragment : Fragment() {
                     onePositionLiveData.value=null
                 }
             })
-            paramsIsSaved.observe(requireActivity(),{
+            paramsIsSaved.observe(viewLifecycleOwner,{
                 it?.let {
                     if(it){
                         when(quantityIsChanged()){
-                            true->letSavingQuantity2(comparisonQuantity())
-                            else->viewModel.refreshList(commonСontainerId!!)
+                            true-> letSavingQuantity2(comparisonQuantity())
+                            else-> backStack()
                         }
                     }
                     paramsIsSaved.value=null
                 }
             })
+            redactFinished.observe(viewLifecycleOwner,{
+                if (it!=null && it){
+                    backStack()
+                    redactFinished.value=null
+                }
+            })
         }
         return view
+    }
+
+    fun backStack(){
+        navController?.popBackStack()
     }
 
     override fun onDestroyView() {
@@ -148,14 +138,14 @@ class TreeRedactFragment : Fragment() {
     private fun backClickListener(toolbar: MaterialToolbar){
         toolbar.setOnClickListener {
             when {
-                paramsIsChaged() -> {
+                paramsIsChanged() -> {
                     letSavingParams()
                 }
                 quantityIsChanged() -> {
                     letSavingQuantity(comparisonQuantity())
                 }
                 else -> {
-                    Navigation.findNavController(it).popBackStack()
+                    backStack()
                 }
             }
         }
@@ -164,6 +154,7 @@ class TreeRedactFragment : Fragment() {
     private fun letSavingParams(){
         quitDialog {
             viewModel.saveNewParams(
+                container = idOfContain!!,
                 lastdiameter = Param.lastDiameter,
                 lastLength = Param.lastLength,
                 newDiameter =  Param.newDiameter,
@@ -175,12 +166,14 @@ class TreeRedactFragment : Fragment() {
         when(comparisonResult){
             INCREASE->{ val count =Param.newQuantity-Param.lastQuantity   //увеличение +1
                 quitDialog {viewModel.addPositions(
+                    container = idOfContain!!,
                     count = count,
                     diameter = Param.newDiameter,
                     length = Param.newLength) }}
             DECREASE->{                                                  //уменьшение -1
                 val limit= Param.lastQuantity-Param.newQuantity
                 quitDialog {viewModel.limitDelete(
+                    container = idOfContain!!,
                     diameter =  Param.newDiameter,
                     length = Param.newLength,
                     limit = limit)  }}
@@ -191,12 +184,14 @@ class TreeRedactFragment : Fragment() {
         when(comparisonResult){
             INCREASE->{ val count =Param.newQuantity-Param.lastQuantity   //увеличение +1
                 viewModel.addPositions(
+                    container = idOfContain!!,
                     count = count,
                     diameter = Param.newDiameter,
                     length = Param.newLength)}
             DECREASE->{                                                  //уменьшение -1
                 val limit= Param.lastQuantity-Param.newQuantity
                 viewModel.limitDelete(
+                    container = idOfContain!!,
                     diameter =  Param.newDiameter,
                     length = Param.newLength,
                     limit = limit)}
@@ -206,16 +201,44 @@ class TreeRedactFragment : Fragment() {
 
     private fun quitDialog(positiveFunction: ()-> Unit){
         val dialog =SimpleDialogFragment("Сохранить?",
-                positiveFunction={positiveFunction()},
-                navigate={navController?.popBackStack()}
+                positiveAction= {positiveFunction()},
+                negativeAction= {navController?.popBackStack()}
         ).show(manager!!, "simpleDialog")
     }
 
-    private fun init(binding : FragmentTreeRedactBinding){
+    private fun commonInit(binding : FragmentTreeRedactBinding){
         manager = requireActivity().supportFragmentManager
         navController= Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
         supportToolbar= (activity as AppCompatActivity).supportActionBar?.apply {
             hide()
+        }
+    }
+    private fun spinnerLengthInit(binding : FragmentTreeRedactBinding) : Spinner{
+        val lengths :List<String> = ArrayList<String>().addSpinnerList(false,"Выберите длину", LENGTHS)
+        return binding.spinnerLength.apply {
+            setAdapter(lengths)
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>?, view: View,
+                                            position: Int, id: Long) {
+                    Param.newLength = LENGTHS[position]
+                }
+
+                override fun onNothingSelected(arg0: AdapterView<*>?) {}
+            }
+        }
+    }
+    private fun spinnerDiameterInit(binding : FragmentTreeRedactBinding): Spinner{
+        val diameters :List<String> = ArrayList<String>().addSpinnerList(false,"Выберите диаметр", DIAMETERS as List<Int>)
+        return binding.spinnerDiameter.apply {
+            setAdapter(diameters)
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>?, view: View,
+                                            position: Int, id: Long) {
+                    Param.newDiameter= DIAMETERS!![position]
+                }
+
+                override fun onNothingSelected(arg0: AdapterView<*>?) {}
+            }
         }
     }
 
@@ -235,7 +258,7 @@ class TreeRedactFragment : Fragment() {
         }
     }
 
-    private fun paramsIsChaged() : Boolean{
+    private fun paramsIsChanged() : Boolean{
         Param.apply {
             return !(lastLength== newLength &&
                     lastDiameter== newDiameter)

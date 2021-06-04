@@ -23,14 +23,6 @@ class SaveOneTree @Inject constructor(val repository: RepositoryTrees): UseCase<
     }
 }
 
-class SaveListTree @Inject constructor(val repository: RepositoryTrees): UseCase<List<Long>, List<TreePosition>>(){
-
-    override suspend fun run(params: List<TreePosition>) :List<Long>{
-        val ok=repository.saveList(params)
-        return ok
-    }
-}
-
 class SaveTreeContent @Inject constructor(val repository: RepositoryTrees): UseCase<Boolean, ContainerContentsTab>(){
 
     override suspend fun run(params: ContainerContentsTab) :Boolean{
@@ -40,14 +32,6 @@ class SaveTreeContent @Inject constructor(val repository: RepositoryTrees): UseC
     }
 }
 
-class SaveTreeContentList @Inject constructor(val repository: RepositoryTrees): UseCase<Boolean, List<ContainerContentsTab>>(){
-
-    override suspend fun run(params: List<ContainerContentsTab>) :Boolean{
-        val longs=repository.saveContentList(params)
-        Loger.log("id of saved position $longs")
-        return longs.isNotEmpty()
-    }
-}
 
 class DeleteOneTree @Inject constructor(val repository: RepositoryTrees): UseCase<Boolean, TreePosition>() {
 
@@ -78,38 +62,3 @@ class UpdateTreeLength @Inject constructor(val repository: RepositoryTrees): Use
     }
 }
 
-class UpdateTreePositions @Inject constructor(val repository: RepositoryTrees): UseCase<Boolean,  NewParams>() {
-    override suspend fun run(params: NewParams): Boolean{
-        val diameter=params.diameter
-        val length =params.length
-        val list =params.idList
-
-        val ok = repository.updatePositions(diameter!!,length,list!!)
-        return ok>0
-    }
-}
-
-class OnePositionById @Inject constructor(val repository: RepositoryTrees): UseCase<TreePosition, Long?>() {
-    override suspend fun run(params: Long?): TreePosition {
-        return repository.getOne(params!!)
-    }
-}
-
-class DeleteByLimit @Inject constructor(val repository: RepositoryTrees): UseCase<Boolean, Limit>() {
-    override suspend fun run(params: Limit): Boolean {
-        val diameter=params.diameter
-        val length =params.length
-        val limit =params.limit
-        Loger.log(limit)
-        val ok=repository.deleteByLimit(diameter, length, limit)
-        return ok>0
-    }
-}
-class GetPositionsList @Inject constructor(val repository: RepositoryTrees) : UseCase<List<Long>, NewParams>() {
-    override suspend fun run( params: NewParams): List<Long> {
-        val diameter=params.diameter
-        val length =params.length
-        val container =params.containerOfTrees
-        return repository.idList(container,diameter!!,length)
-    }
-}

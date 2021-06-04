@@ -57,8 +57,9 @@ class LoadOne @Inject constructor(val repository: RepositoryContains): UseCase<M
 class CommonQuantity @Inject constructor(val repository: RepositoryContains): UseCase<Int, Long>() {
 
     override suspend fun run(params: Long): Int {
-        Loger.log(params.toString()+" id ////////////////////////////")
-        Loger.log(repository.getQuantity(params).toString()+"////////////////////////////")
+        Loger.log(params.toString()+" в интеракторе ////////////////////////////")
+        Loger.log(params.toString()+" id контейнера ////////////////////////////")
+        Loger.log(repository.getQuantity(params).toString()+"кол-во позиций////////////////////////////")
         return repository.getQuantity(params)
     }
 }
