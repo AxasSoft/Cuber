@@ -68,10 +68,7 @@ class ContainsViewModel @Inject constructor (
         deleteTrees(idOfContainers)
     }
 
-    fun getQuantity(id: Long,binder: ItemContainerSwipeBinding){
-        getCommonQuantity(id){
-            binder.include.quantity.text=it.toString()
-            //commonQuantity.value=it
-        }
+    suspend fun getQuantity(id: Long): Int{
+        return getCommonQuantity.run(id)
     }
 }

@@ -9,10 +9,15 @@ import androidx.navigation.Navigation
 import ru.wood.cuber.R
 import ru.wood.cuber.view_models.ContainsViewModel
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.daimajia.swipe.SwipeLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.wood.cuber.Loger
 import ru.wood.cuber.utill.Utill.BUNDLE_ID
 import ru.wood.cuber.ViewDialog
@@ -131,16 +136,16 @@ class ContainFragment : Fragment() {
     private fun swipeHolderAction(binder: ItemContainerSwipeBinding, entity: MyСontainer, position: Int, itemView: View){
         with(binder){
             this.entity=entity
+            val textView=binder.include.quantity
 
-            //------------------------------------------------------------------------------------------------------------------??
-            //------------------------------------------------------------------------------------------------------------------->
-            Loger.log(entity.id.toString()+"---------------------")
-            val getCommonQuantity= CommonQuantity (RepositoryContains(AppDatabase.getInstance(requireContext())!!.daoContains()))
-            getCommonQuantity(entity.id){
-                binder.include.quantity.text=it.toString()
+            //------------------------------------------------
+            lifecycleScope.launch {
+               val quantity= async { withContext(Dispatchers.IO){
+                   viewModel.getQuantity(entity.id) }
+               }
+                textView.text=quantity.await().toString()
             }
-            //------------------------------------------------------------------------------------------------------------------??
-            //------------------------------------------------------------------------------------------------------------------->
+            //------------------------------------------------
 
             swipe.setShowMode(SwipeLayout.ShowMode.PullOut)
             //dari kanan
