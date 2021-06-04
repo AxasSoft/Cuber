@@ -9,6 +9,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
 import dagger.hilt.android.AndroidEntryPoint
 import ru.wood.cuber.databinding.ActivityMainBinding
+import ru.wood.cuber.utill.Utill
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -30,5 +31,7 @@ class MainActivity : AppCompatActivity() {
         for (x in 16..51 ){
             Utill.DIAMETERS?.add(x)
         }
+
+
     }
 }

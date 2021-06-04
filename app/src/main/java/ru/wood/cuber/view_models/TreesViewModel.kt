@@ -10,7 +10,6 @@ import ru.wood.cuber.interactors.ParamsClasses.NewParams
 import javax.inject.Inject
 @HiltViewModel
 class TreesViewModel @Inject constructor (
-        private val listCase: TreesList,
         private val save: SaveOneTree,
         private val saveList: SaveListTree,
         private val saveContent: SaveTreeContent,
@@ -21,21 +20,16 @@ class TreesViewModel @Inject constructor (
         private val updateParams: UpdateTreePositions,
         private val getOne: OnePositionById,
         private val deleteByLimit: DeleteByLimit,
-        private val getPosiitonList:GetPositionsList
+        private val getPosiitonList:GetPositionsList,
+        private val loadOneContainer:LoadOne
         ) : BaseViewModel () {
     var liveData = MutableLiveData<List<TreePosition>>()
+    var containerLive = MutableLiveData<MyСontainer>()
     var onePositionLiveData = MutableLiveData<TreePosition>()
     var paramsIsSaved= MutableLiveData<Boolean>()
 
     var commonСontainerId: Long?=null
     var commonLength: Double?=null
-
-    fun getListTrees(idContainer: Int){
-        listCase(idContainer){
-            liveData.value=it
-        }
-    }
-
 
     fun refreshList(idOfContain: Long){
         loadlist(idOfContain){
@@ -168,6 +162,11 @@ class TreesViewModel @Inject constructor (
                     //refreshList(commonСontainerId!!)
 
             }
+        }
+    }
+    fun loadContainer (id: Long){
+        loadOneContainer(id){
+            containerLive.value=it
         }
     }
 }

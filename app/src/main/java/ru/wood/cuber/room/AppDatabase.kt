@@ -10,14 +10,16 @@ const val DATABASE_NAME = "cuber-db"
 
 @Database (entities = [
     ContainerContentsTab::class,
-    MyCalculatesContentsTab::class,
+    MyOrderContentsTab::class,
     TreePosition::class,
     MyСontainer::class,
-    MyCalculation::class], version = 1)
+    MyOrder::class], version = 1)
 abstract class AppDatabase: RoomDatabase() {
     abstract fun daoTrees(): DaoTrees
-    abstract fun daoCalculates(): DaoMyCalculates
+    abstract fun daoOrder(): DaoMyOrder
     abstract fun daoContains(): DaoContains
+    abstract fun daoResults(): DaoResults
+    abstract fun daoContainRedact(): DaoContainRedact
 
     companion object {
         private var INSTANCE: AppDatabase? = null
@@ -36,4 +38,5 @@ abstract class AppDatabase: RoomDatabase() {
             INSTANCE = null
         }
     }
+
 }

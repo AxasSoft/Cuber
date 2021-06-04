@@ -3,7 +3,6 @@ package ru.wood.cuber.ui
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
-import androidx.appcompat.app.ActionBar
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
@@ -12,21 +11,21 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import com.daimajia.swipe.SwipeLayout
 import dagger.hilt.android.AndroidEntryPoint
-import ru.wood.cuber.Loger
 import ru.wood.cuber.R
+import ru.wood.cuber.utill.Utill.BUNDLE_ID
 import ru.wood.cuber.ViewDialog
 import ru.wood.cuber.adapters.RecyclerCallback
 import ru.wood.cuber.adapters.SwipeRecyclerAdapter2
-import ru.wood.cuber.data.MyCalculation
-import ru.wood.cuber.databinding.FragmentMyCalculationsBinding
+import ru.wood.cuber.data.MyOrder
+import ru.wood.cuber.databinding.FragmentMyOrderBinding
 import ru.wood.cuber.databinding.ItemCalculateSwipeBinding
-import ru.wood.cuber.view_models.CalculationsViewModel
-import ru.wood.cuber.view_models.ContainsViewModel
+import ru.wood.cuber.view_models.OrderViewModel
+
 @AndroidEntryPoint
-class MyCalculationsFragment : Fragment() {
+class MyOrderFragment : Fragment() {
     private lateinit var navController: NavController
-    private val viewModel: CalculationsViewModel by viewModels()
-    private lateinit var adapter:SwipeRecyclerAdapter2<MyCalculation,ItemCalculateSwipeBinding>
+    private val viewModel: OrderViewModel by viewModels()
+    private lateinit var adapter:SwipeRecyclerAdapter2<MyOrder,ItemCalculateSwipeBinding>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +50,7 @@ class MyCalculationsFragment : Fragment() {
             setDisplayHomeAsUpEnabled(true)
             title="3434634634"
         }*/
-        val binding=FragmentMyCalculationsBinding.inflate(inflater)
+        val binding= FragmentMyOrderBinding.inflate(inflater)
         val view=binding.root
         binding.fragment=this
         navController=findNavController(this)
@@ -62,8 +61,8 @@ class MyCalculationsFragment : Fragment() {
             liveData.observe(viewLifecycleOwner,{
                 if (it==null){return@observe}
                 adapter=SwipeRecyclerAdapter2(it,R.layout.item_calculate_swipe,
-                        object : RecyclerCallback<ItemCalculateSwipeBinding, MyCalculation> {
-                            override fun bind(binder: ItemCalculateSwipeBinding, entity: MyCalculation, position: Int,itemView: View) {
+                        object : RecyclerCallback<ItemCalculateSwipeBinding, MyOrder> {
+                            override fun bind(binder: ItemCalculateSwipeBinding, entity: MyOrder, position: Int, itemView: View) {
                                 swipeHolderAction(binder, entity, position, itemView)
                                 subscribeClickPosition(binder.include.clicableLayout, entity.id)
                             }
@@ -85,7 +84,7 @@ class MyCalculationsFragment : Fragment() {
     fun subscribeClickPosition(clicableLayout: View, idPosition: Long){
         clicableLayout.setOnClickListener {
             val bundle= Bundle()
-            bundle.putLong("id", idPosition)
+            bundle.putLong(BUNDLE_ID, idPosition)
             navController.navigate(R.id.action_myCalculationsFragment_to_containersFragment,bundle)
         }
     }
@@ -104,7 +103,7 @@ class MyCalculationsFragment : Fragment() {
                 return super.onOptionsItemSelected(item)}
         }
     }
-    private fun swipeHolderAction(binder: ItemCalculateSwipeBinding, entity: MyCalculation, position: Int,itemView: View){
+    private fun swipeHolderAction(binder: ItemCalculateSwipeBinding, entity: MyOrder, position: Int, itemView: View){
         with(binder){
             this.include.entity=entity
             swipe.setShowMode(SwipeLayout.ShowMode.PullOut)

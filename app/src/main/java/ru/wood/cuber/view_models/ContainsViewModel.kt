@@ -1,25 +1,29 @@
 package ru.wood.cuber.view_models
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import ru.wood.cuber.Loger
-import ru.wood.cuber.data.MyCalculatesContentsTab
+import ru.wood.cuber.data.MyOrderContentsTab
 import ru.wood.cuber.data.MyСontainer
+import ru.wood.cuber.databinding.ItemContainerSwipeBinding
 import ru.wood.cuber.interactors.*
 import javax.inject.Inject
 @HiltViewModel
 class ContainsViewModel @Inject constructor (
-        private val listCase: ContainsList,
         private val save: SaveOneContain,
         private val saveContent: SaveContent,
         private val loadlist: LoadContains,
         private val deleteOne: DeleteOneContain,
-        private val deleteTrees: ClearOneContain
+        private val deleteTrees: ClearOneContain,
+        private val getCommonQuantity:CommonQuantity
 
         ) : BaseViewModel() {
 
     var liveData = MutableLiveData<List<MyСontainer>>()
-
+    var commonQuantity = MutableLiveData<Int>()
 
     fun refreshList(idOfCalculates: Long){
         loadlist(idOfCalculates){
@@ -42,8 +46,8 @@ class ContainsViewModel @Inject constructor (
     }
 
     private fun saveContent(idOfCalculates: Long, idOfContainers: Long){
-        saveContent(MyCalculatesContentsTab(
-                idOfCalculates = idOfCalculates,
+        saveContent(MyOrderContentsTab(
+                idOfOrder = idOfCalculates,
                 idOfContainers = idOfContainers
         )){ contentSaved ->
             if(contentSaved){
@@ -62,5 +66,12 @@ class ContainsViewModel @Inject constructor (
     }
     private fun clearTreesContent(idOfContainers: Long){
         deleteTrees(idOfContainers)
+    }
+
+    fun getQuantity(id: Long,binder: ItemContainerSwipeBinding){
+        getCommonQuantity(id){
+            binder.include.quantity.text=it.toString()
+            //commonQuantity.value=it
+        }
     }
 }

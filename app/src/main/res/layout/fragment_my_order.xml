@@ -3,7 +3,7 @@
     <data>
         <variable
             name="fragment"
-            type="ru.wood.cuber.ui.MyCalculationsFragment" />
+            type="ru.wood.cuber.ui.MyOrderFragment" />
     </data>
 
 <RelativeLayout
@@ -12,7 +12,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.MyCalculationsFragment">
+    tools:context=".ui.MyOrderFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"

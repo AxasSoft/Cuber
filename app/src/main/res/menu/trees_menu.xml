@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/icon_2"
+        android:id="@+id/redact"
         android:orderInCategory="100"
         android:title="@string/add"
         android:icon="@drawable/ic_redact"

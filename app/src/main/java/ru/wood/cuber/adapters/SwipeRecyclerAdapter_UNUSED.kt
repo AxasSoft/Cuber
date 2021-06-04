@@ -37,6 +37,7 @@ class SwipeRecyclerAdapter_UNUSED (context: Context, objects: List<MyСontainer>
         val item: MyСontainer = list[position]
         viewHolder.binding?.entity = list[position]
         viewHolder.binding?.swipe?.setShowMode(SwipeLayout.ShowMode.PullOut)
+        viewModel.getQuantity(item.id,viewHolder.binding!!)
 
         //dari kanan
         viewHolder.binding!!.swipe.addDrag(

@@ -1,7 +1,7 @@
 package ru.wood.cuber.interactors
 
 import ru.wood.cuber.Loger
-import ru.wood.cuber.data.MyCalculatesContentsTab
+import ru.wood.cuber.data.MyOrderContentsTab
 import ru.wood.cuber.data.MyСontainer
 import ru.wood.cuber.repositories.RepositoryContains
 import javax.inject.Inject
@@ -22,9 +22,9 @@ class SaveOneContain @Inject constructor(val repository: RepositoryContains): Us
     }
 }
 
-class SaveContent @Inject constructor(val repository: RepositoryContains): UseCase<Boolean, MyCalculatesContentsTab>(){
+class SaveContent @Inject constructor(val repository: RepositoryContains): UseCase<Boolean, MyOrderContentsTab>(){
 
-    override suspend fun run(params: MyCalculatesContentsTab) :Boolean{
+    override suspend fun run(params: MyOrderContentsTab) :Boolean{
         val ok=repository.saveContent(params)
         Loger.log("id of saved position $ok")
         return ok!=0L
@@ -39,11 +39,26 @@ class DeleteOneContain @Inject constructor(val repository: RepositoryContains): 
     }
 }
 
-class ClearOneCalculate @Inject constructor(val repository: RepositoryContains): UseCase<Boolean, Long>() {
+class ClearOneOrder @Inject constructor(val repository: RepositoryContains): UseCase<Boolean, Long>() {
 
     override suspend fun run(params: Long): Boolean {
         val ok = repository.deleteContent(params)
         Loger.log("id of saved position $ok")
         return ok > 0
+    }
+}
+class LoadOne @Inject constructor(val repository: RepositoryContains): UseCase<MyСontainer, Long>() {
+
+    override suspend fun run(params: Long): MyСontainer {
+        return repository.loadOne(params)
+    }
+}
+
+class CommonQuantity @Inject constructor(val repository: RepositoryContains): UseCase<Int, Long>() {
+
+    override suspend fun run(params: Long): Int {
+        Loger.log(params.toString()+" id ////////////////////////////")
+        Loger.log(repository.getQuantity(params).toString()+"////////////////////////////")
+        return repository.getQuantity(params)
     }
 }

@@ -5,13 +5,18 @@
             name="fragment"
             type="ru.wood.cuber.ui.TreesFragment" />
     </data>
-<LinearLayout
+<FrameLayout
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.TreesFragment">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -46,16 +51,17 @@
                 />
         </FrameLayout>
         <TextView
-
+            android:clickable="true"
+            android:focusable="true"
             android:textStyle="bold"
-            android:id="@+id/text_view_1"
+            android:id="@+id/result"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:textColor="@color/black"
             android:text="30.23 M3"/>
         <TextView
-            android:layout_below="@id/text_view_1"
+            android:layout_below="@id/result"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="112 шт."/>
@@ -98,14 +104,16 @@
         android:id="@+id/recycler"
         android:layout_marginLeft="@dimen/margin_normal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="300dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
+    </LinearLayout>
     <fragment
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="@dimen/margin_min"
         android:id="@+id/diametr_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:name="ru.wood.cuber.ui.diametrs.DiametrContainer"/>
-
-</LinearLayout>
+</FrameLayout>
 </layout>

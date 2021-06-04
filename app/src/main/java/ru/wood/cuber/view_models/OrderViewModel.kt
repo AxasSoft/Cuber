@@ -1,24 +1,21 @@
 package ru.wood.cuber.view_models
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import ru.wood.cuber.data.MyCalculation
+import ru.wood.cuber.data.MyOrder
 import ru.wood.cuber.interactors.*
-import java.text.SimpleDateFormat
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-class CalculationsViewModel @Inject constructor(
+class OrderViewModel @Inject constructor(
         private val listForExample: LoadForExample,
-        private val loadlist: LoadCalculatesList,
-        private val save: SaveOneCalculate,
-        private val delete: DeleteOneCalculate,
-        private val deleteContaines: ClearOneCalculate
+        private val loadlist: LoadOrderList,
+        private val save: SaveOneOrder,
+        private val delete: DeleteOneOrder,
+        private val deleteContaines: ClearOneOrder
         ) :BaseViewModel() {
 
-    var liveData = MutableLiveData<List<MyCalculation>>()
+    var liveData = MutableLiveData<List<MyOrder>>()
 
     fun getExampleList(){
         listForExample(null){
@@ -32,7 +29,7 @@ class CalculationsViewModel @Inject constructor(
     }
 
     fun addNew(name: String){
-        val one = MyCalculation(
+        val one = MyOrder(
                 name = name,
                 date = currentDate)
 
@@ -44,7 +41,7 @@ class CalculationsViewModel @Inject constructor(
         }
     }
 
-    fun deletePosition(one: MyCalculation){
+    fun deletePosition(one: MyOrder){
         delete(one){
             if (it){
                 refreshList()

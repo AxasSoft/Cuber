@@ -11,5 +11,5 @@ data class ContainerContentsTab (
         val idOfTreePosition: Long?=null,
 
         //Если нужно будет менять длину именно для всего расчета, а не котнейнера
-        val idOfCalculation: Long?=null
+        val idOfOrder: Long?=null
 ) :BaseItem()

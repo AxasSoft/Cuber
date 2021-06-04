@@ -4,6 +4,7 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.view.*
 import android.widget.*
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -13,7 +14,9 @@ import com.daimajia.swipe.SwipeLayout
 import dagger.hilt.android.AndroidEntryPoint
 import ru.wood.cuber.Loger
 import ru.wood.cuber.R
-import ru.wood.cuber.Utill
+import ru.wood.cuber.utill.Utill
+import ru.wood.cuber.utill.Utill.BUNDLE_ID
+import ru.wood.cuber.utill.Utill.BUNDLE_QUANTITY
 import ru.wood.cuber.ViewDialog
 import ru.wood.cuber.adapters.RecyclerCallback
 import ru.wood.cuber.adapters.SimpleRecyclerAdapter
@@ -31,23 +34,25 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
     private var currentPositionLength : Int = 0
     private lateinit var spinnerText: TextView
     private var idOfContain : Long? =null
+    private var actionBar: ActionBar?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         currentPositionLength=1
         navController= Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
+        actionBar=(activity as AppCompatActivity).supportActionBar
+        actionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            title=""
+        }
     }
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        val actionBar=(activity as AppCompatActivity).supportActionBar
-        actionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-        }
         val binding=FragmentTreesBinding.inflate(inflater)
-        binding.textView1.paintFlags = binding.textView1.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        //binding.result.paintFlags = binding.result.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         val view= binding.root
         val recycler=binding.recycler
         val spinnerLength : Spinner = binding.spinnerLength
@@ -56,6 +61,14 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
         val lengths :List<String> = ArrayList<String>().addSpinnerList(
                 Utill.LENGTHS
         )
+
+        val result=binding.result.apply {
+            paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
+            setOnClickListener {
+                goToResult()
+            }
+        }
+
 
         spinnerLength.apply {
             setAdapter(lengths)
@@ -76,9 +89,18 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
             }
         }
 
-        idOfContain= arguments?.getLong("id")
+        idOfContain= arguments?.getLong(BUNDLE_ID)
 
         with(viewModel){
+            loadContainer(idOfContain!!)
+            containerLive.observe(viewLifecycleOwner,{
+                it?.let {
+                    actionBar?.title = it.name
+                    containerLive.value=null
+                }
+            })
+
+
             commonСontainerId=idOfContain
             refreshList(commonСontainerId!!)
             liveData.observe(viewLifecycleOwner, {
@@ -98,7 +120,7 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
                     recycler.adapter = adapter
                     adapter!!.notifyDataSetChanged()
 
-                    actionBar?.title = "name"
+                    //actionBar?.title = "name"
                     liveData.value=null
                 }
             })
@@ -110,6 +132,14 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
     fun backStack(){
         navController?.popBackStack()
     }
+    fun goToResult(){
+        Loger.log("click")
+        idOfContain?.let {
+            val bundle= Bundle()
+            bundle.putLong(BUNDLE_ID,it)
+            navController?.navigate(R.id.action_treesFragment_to_resultFragment,bundle)
+        }
+    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
@@ -120,6 +150,12 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
         when(item.itemId){
             android.R.id.home -> {
                 backStack(); return true
+            }
+            R.id.redact -> {
+                val bundle = Bundle()
+                bundle.putLong(BUNDLE_ID, idOfContain!!)
+                navController?.navigate(R.id.action_treesFragment_to_containerRedactFragment,bundle)
+                return true
             }
             else ->{
                 return super.onOptionsItemSelected(item)}
@@ -133,8 +169,8 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
     private fun subscribeClickPosition(clicableLayout: View, entity: TreePosition){
         clicableLayout.setOnClickListener {
             val bundle= Bundle()
-            bundle.putLong("id", entity.id)
-            bundle.putInt("quantity",entity.quantity)
+            bundle.putLong(BUNDLE_ID, entity.id)
+            bundle.putInt(BUNDLE_QUANTITY,entity.quantity)
             Loger.log("•••• "+entity.quantity)
             navController?.navigate(R.id.action_treesFragment_to_treeRedactFragment, bundle)
         }
@@ -144,7 +180,7 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
         currentPositionLength.let {
             spinner.setSelection(it)
             spinnerText.text = lengths[it] + "м"
-            viewModel.commonLength=Utill.LENGTHS[it]
+            viewModel.commonLength= Utill.LENGTHS[it]
         }
     }
 

@@ -17,10 +17,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.wood.cuber.Loger
 import ru.wood.cuber.R
 import ru.wood.cuber.SimpleDialogFragment
-import ru.wood.cuber.Utill.DECREASE
-import ru.wood.cuber.Utill.DIAMETERS
-import ru.wood.cuber.Utill.INCREASE
-import ru.wood.cuber.Utill.LENGTHS
+import ru.wood.cuber.utill.Utill.BUNDLE_ID
+import ru.wood.cuber.utill.Utill.BUNDLE_QUANTITY
+import ru.wood.cuber.utill.Utill.DECREASE
+import ru.wood.cuber.utill.Utill.DIAMETERS
+import ru.wood.cuber.utill.Utill.INCREASE
+import ru.wood.cuber.utill.Utill.LENGTHS
 import ru.wood.cuber.data.TreePosition
 import ru.wood.cuber.databinding.FragmentTreeRedactBinding
 import ru.wood.cuber.view_models.TreesViewModel
@@ -84,8 +86,8 @@ class TreeRedactFragment : Fragment() {
             backClickListener(this)
         }
 
-        val id=arguments?.getLong("id")
-        val quantity=arguments?.getInt("quantity")
+        val id=arguments?.getLong(BUNDLE_ID)
+        val quantity=arguments?.getInt(BUNDLE_QUANTITY)
         with(viewModel){
             id?.let { getOneTree(it) }
             onePositionLiveData.observe(viewLifecycleOwner,{

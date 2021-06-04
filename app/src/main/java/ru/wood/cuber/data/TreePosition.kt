@@ -2,7 +2,6 @@ package ru.wood.cuber.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.wood.cuber.Utill.COUNT_QUANTITY
 
 @Entity
 data class TreePosition (

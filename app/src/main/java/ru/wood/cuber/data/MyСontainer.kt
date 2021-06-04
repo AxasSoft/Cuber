@@ -10,5 +10,6 @@ data class MyСontainer (
     val date: String?,
     val name:String?,
     val volume: Double?=null,
-    val quantity: Int?=null
+    val quantity: Int?=null,
+    val weight: Long?=3200
 ):BaseItem()

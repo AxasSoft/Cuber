@@ -1,8 +1,7 @@
 package ru.wood.cuber.repositories
 
 import ru.wood.cuber.Loger
-import ru.wood.cuber.data.MyCalculatesContentsTab
-import ru.wood.cuber.data.MyCalculation
+import ru.wood.cuber.data.MyOrderContentsTab
 import ru.wood.cuber.data.MyСontainer
 import ru.wood.cuber.room.DaoContains
 import javax.inject.Inject
@@ -26,12 +25,15 @@ class RepositoryContains @Inject constructor(val dao: DaoContains){
     fun saveOne(one: MyСontainer): Long{
         return dao.save(one)
     }
-    fun saveContent(contentTab: MyCalculatesContentsTab): Long{
+    fun saveContent(contentTab: MyOrderContentsTab): Long{
         return dao.saveContentTab(contentTab)
     }
 
     fun loadList(calculateId: Long): List<MyСontainer> {
         return dao.load(calculateId)
+    }
+    fun loadOne( id: Long) : MyСontainer{
+        return dao.loadOne(id)
     }
 
     fun  deleteOne(one: MyСontainer): Int{
@@ -43,5 +45,8 @@ class RepositoryContains @Inject constructor(val dao: DaoContains){
         val resultContentDelete = dao.deleteContent(idOfCalculates)
         Loger.log("resultContentDelete = $resultContentDelete")
         return resultContentDelete
+    }
+    fun getQuantity(container: Long): Int{
+        return dao.calculateQuantity(container)
     }
 }

@@ -1,4 +1,4 @@
-package ru.wood.cuber
+package ru.wood.cuber.utill
 
 object Utill {
     val LENGTHS : List<Double> = arrayListOf(6.0, 5.4, 4.9)
@@ -7,5 +7,8 @@ object Utill {
     const val COUNT_QUANTITY=1
     const val INCREASE=1
     const val DECREASE=-1
+
+    const val BUNDLE_ID="id"
+    const val BUNDLE_QUANTITY="quantity"
 
 }

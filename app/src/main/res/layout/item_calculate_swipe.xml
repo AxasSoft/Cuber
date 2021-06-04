@@ -5,7 +5,7 @@
     <data>
         <variable
             name="entity"
-            type="ru.wood.cuber.data.MyCalculation" />
+            type="ru.wood.cuber.data.MyOrder" />
     </data>
     <com.daimajia.swipe.SwipeLayout
         android:orientation="vertical"
@@ -36,7 +36,7 @@
 
         <include
             android:id="@+id/include"
-            layout="@layout/item_calculates"/>
+            layout="@layout/item_order"/>
     </com.daimajia.swipe.SwipeLayout>
 
 </layout>

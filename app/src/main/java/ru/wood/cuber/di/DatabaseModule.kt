@@ -6,10 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import ru.wood.cuber.room.AppDatabase
-import ru.wood.cuber.room.DaoContains
-import ru.wood.cuber.room.DaoMyCalculates
-import ru.wood.cuber.room.DaoTrees
+import ru.wood.cuber.room.*
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -27,11 +24,19 @@ class DatabaseModule {
         return appDatabase.daoTrees()
     }
     @Provides
-    fun provideDaoMyCalculates(appDatabase: AppDatabase): DaoMyCalculates {
-        return appDatabase.daoCalculates()
+    fun provideDaoMyOrders(appDatabase: AppDatabase): DaoMyOrder {
+        return appDatabase.daoOrder()
     }
     @Provides
     fun provideDaoContains(appDatabase: AppDatabase): DaoContains {
         return appDatabase.daoContains()
+    }
+    @Provides
+    fun provideDaoResults(appDatabase: AppDatabase): DaoResults {
+        return appDatabase.daoResults()
+    }
+    @Provides
+    fun provideDaoContainRedact(appDatabase: AppDatabase): DaoContainRedact {
+        return appDatabase.daoContainRedact()
     }
 }

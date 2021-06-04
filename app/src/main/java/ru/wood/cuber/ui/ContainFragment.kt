@@ -13,12 +13,17 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.daimajia.swipe.SwipeLayout
 import dagger.hilt.android.AndroidEntryPoint
+import ru.wood.cuber.Loger
+import ru.wood.cuber.utill.Utill.BUNDLE_ID
 import ru.wood.cuber.ViewDialog
 import ru.wood.cuber.adapters.RecyclerCallback
 import ru.wood.cuber.adapters.SwipeRecyclerAdapter2
 import ru.wood.cuber.data.MyСontainer
 import ru.wood.cuber.databinding.FragmentContainBinding
 import ru.wood.cuber.databinding.ItemContainerSwipeBinding
+import ru.wood.cuber.interactors.CommonQuantity
+import ru.wood.cuber.repositories.RepositoryContains
+import ru.wood.cuber.room.AppDatabase
 
 @AndroidEntryPoint
 class ContainFragment : Fragment() {
@@ -57,21 +62,35 @@ class ContainFragment : Fragment() {
         }*/
         val recycler=binding.recycler
 
-        idOfCalculate= arguments?.getLong("id")
+        idOfCalculate= arguments?.getLong(BUNDLE_ID)
         with(viewModel){
             idOfCalculate?.let {refreshList(it)}
             liveData.observe(viewLifecycleOwner,{
                 if (it==null){return@observe}
+
                 adapter=SwipeRecyclerAdapter2(it,R.layout.item_container_swipe,
                         object : RecyclerCallback<ItemContainerSwipeBinding, MyСontainer> {
                             override fun bind(binder: ItemContainerSwipeBinding, entity: MyСontainer, position: Int,itemView: View) {
                                 swipeHolderAction(binder, entity, position, itemView)
                                 subscribeClickPosition(binder.include.clicableLayout, entity.id)
+
+                                Loger.log("id ${entity.id}")
+
+                               //Расчет кол-ва
+/*
+                                commonQuantity.observe(this@ContainFragment.viewLifecycleOwner , {
+                                    it?.let {
+                                        binder.include.quantity.text=it.toString()
+                                    }
+                                })*/
+
                             }
                         })
+               // val adapter= SwipeRecyclerAdapter_UNUSED(requireContext(),it, viewModel)
                 recycler.adapter=adapter
                 adapter.notifyDataSetChanged()
             })
+
         }
 
         return view
@@ -104,7 +123,7 @@ class ContainFragment : Fragment() {
     fun subscribeClickPosition(clicableLayout: View, idPosition: Long){
         clicableLayout.setOnClickListener {
             val bundle= Bundle()
-            bundle.putLong("id", idPosition)
+            bundle.putLong(BUNDLE_ID, idPosition)
             navController.navigate(R.id.action_containersFragment_to_treesFragment,bundle)
         }
     }
@@ -112,6 +131,17 @@ class ContainFragment : Fragment() {
     private fun swipeHolderAction(binder: ItemContainerSwipeBinding, entity: MyСontainer, position: Int, itemView: View){
         with(binder){
             this.entity=entity
+
+            //------------------------------------------------------------------------------------------------------------------??
+            //------------------------------------------------------------------------------------------------------------------->
+            Loger.log(entity.id.toString()+"---------------------")
+            val getCommonQuantity= CommonQuantity (RepositoryContains(AppDatabase.getInstance(requireContext())!!.daoContains()))
+            getCommonQuantity(entity.id){
+                binder.include.quantity.text=it.toString()
+            }
+            //------------------------------------------------------------------------------------------------------------------??
+            //------------------------------------------------------------------------------------------------------------------->
+
             swipe.setShowMode(SwipeLayout.ShowMode.PullOut)
             //dari kanan
             swipe.addDrag(

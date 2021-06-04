@@ -39,7 +39,10 @@ object ViewDialog {
             commonAction()
             dialog.dismiss()
         }
-        dialog.show()
+        dialog.apply {
+            show()
+            setCanceledOnTouchOutside(true)
+        }
     }
 
     fun showCreateCalculationDialog (context: Context, msg: String, positiveAction: (name: String)->Unit) {
@@ -72,7 +75,10 @@ object ViewDialog {
         cancel.setOnClickListener {
             dialog.dismiss()
         }
-        dialog.show()
+        dialog.apply {
+            show()
+            setCanceledOnTouchOutside(true)
+        }
     }
 }
 
@@ -91,6 +97,26 @@ class SimpleDialogFragment(
                     }
                     .setPositiveButton("Да") { dialog, id -> dialog.cancel();  positiveFunction(); navigate()
                     }
+            builder.create()
+        } ?: throw IllegalStateException("Activity cannot be null")
+    }
+}
+
+class SimpleDialogFragment2(
+    val message: String?,
+    val positiveFunction: ()-> Unit,
+    val negativeFunction: ()->Unit
+):DialogFragment(){
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return activity?.let {
+            val builder = AlertDialog.Builder(it)
+            builder.setTitle(message)
+                //.setMessage("вопрос")
+                .setNegativeButton("Отмена"){ dialog, id ->  dialog.cancel(); negativeFunction()
+                }
+                .setPositiveButton("Да") { dialog, id -> dialog.cancel();  positiveFunction()
+                }
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
     }

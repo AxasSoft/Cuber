@@ -22,10 +22,16 @@
         <action
             android:id="@+id/action_treesFragment_to_treeRedactFragment"
             app:destination="@id/treeRedactFragment" />
+        <action
+            android:id="@+id/action_treesFragment_to_resultFragment"
+            app:destination="@id/resultFragment" />
+        <action
+            android:id="@+id/action_treesFragment_to_containerRedactFragment"
+            app:destination="@id/containerRedactFragment" />
     </fragment>
     <fragment
         android:id="@+id/myCalculationsFragment"
-        android:name="ru.wood.cuber.ui.MyCalculationsFragment"
+        android:name="ru.wood.cuber.ui.MyOrderFragment"
         android:label="MyCalculationsFragment" >
         <action
             android:id="@+id/action_myCalculationsFragment_to_containersFragment"
@@ -35,4 +41,12 @@
         android:id="@+id/treeRedactFragment"
         android:name="ru.wood.cuber.ui.TreeRedactFragment"
         android:label="TreeRedactFragment" />
+    <fragment
+        android:id="@+id/resultFragment"
+        android:name="ru.wood.cuber.ui.ResultFragment"
+        android:label="ResultFragment" />
+    <fragment
+        android:id="@+id/containerRedactFragment"
+        android:name="ru.wood.cuber.ui.ContainerRedactFragment"
+        android:label="ContainerRedactFragment" />
 </navigation>
