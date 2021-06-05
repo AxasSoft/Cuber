@@ -44,4 +44,7 @@ class RepositoryTrees @Inject constructor(val dao: DaoTrees) {
         return dao.updateLength(currentContainer, newLength)
     }
 
+    fun loadSimpleList(container: Long): List<TreePosition>{
+        return dao.loadSimpleList(container)
+    }
 }

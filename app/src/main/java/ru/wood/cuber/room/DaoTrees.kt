@@ -39,5 +39,7 @@ interface DaoTrees {
             "WHERE idOfContainer=:currentContainer) ")
     fun updateLength(currentContainer: Long, newLength: Double): Int
 
+    @Query("SELECT * FROM TreePosition WHERE id IN (SELECT idOfTreePosition FROM ContainerContentsTab WHERE idOfContainer=:container)")
+    fun loadSimpleList(container: Long) : List<TreePosition>
 
 }

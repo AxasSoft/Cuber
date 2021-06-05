@@ -6,11 +6,16 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import com.daimajia.swipe.SwipeLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.wood.cuber.R
 import ru.wood.cuber.ViewDialog
 import ru.wood.cuber.adapters.RecyclerCallback
@@ -44,12 +49,6 @@ class MyOrderFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        /*(activity as AppCompatActivity).supportActionBar?.apply {
-            displayOptions = ActionBar.DISPLAY_SHOW_HOME
-            displayOptions = ActionBar.DISPLAY_SHOW_TITLE
-            setDisplayHomeAsUpEnabled(true)
-            title="3434634634"
-        }*/
         val binding= FragmentMyOrderBinding.inflate(inflater)
         val view=binding.root
         binding.fragment=this
@@ -107,7 +106,16 @@ class MyOrderFragment : Fragment() {
         with(binder){
             this.include.entity=entity
             swipe.setShowMode(SwipeLayout.ShowMode.PullOut)
-            //dari kanan
+
+            lifecycleScope.launch(Dispatchers.Main){
+                val result=async { withContext(Dispatchers.IO){
+                    viewModel.containerslist(entity.id)
+                }}
+                val quantity="${result.await().size} шт"
+                binder.include.quantity.text=quantity
+            }
+
+
             swipe.addDrag(
                     SwipeLayout.DragEdge.Right, binder.swipe.findViewById(R.id.bottom_wraper))
             swipe.addSwipeListener(object : SwipeLayout.SwipeListener {

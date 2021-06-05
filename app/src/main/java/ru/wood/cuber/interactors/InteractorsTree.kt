@@ -14,6 +14,13 @@ class LoadTrees @Inject constructor(val repository: RepositoryTrees): UseCase<Li
     }
 }
 
+class SimpleLoadTrees @Inject constructor(val repository: RepositoryTrees): UseCase<List<TreePosition>, Long?>(){
+
+    override suspend fun run(params: Long?): List<TreePosition> {
+        return repository.loadSimpleList(params!!)
+    }
+}
+
 class SaveOneTree @Inject constructor(val repository: RepositoryTrees): UseCase<Long, TreePosition>(){
 
     override suspend fun run(params: TreePosition) :Long{

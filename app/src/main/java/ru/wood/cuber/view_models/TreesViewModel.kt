@@ -15,7 +15,8 @@ class TreesViewModel @Inject constructor (
         private val loadlist: LoadTrees,
         private val deleteOne: DeleteOneTree,
         private val updateLength: UpdateTreeLength,
-        private val loadOneContainer:LoadOne
+        private val loadOneContainer:LoadOne,
+        private val simpleiList:SimpleLoadTrees
         ) : BaseViewModel () {
     var liveData = MutableLiveData<List<TreePosition>>()
     var containerLive = MutableLiveData<MyСontainer>()
@@ -73,11 +74,13 @@ class TreesViewModel @Inject constructor (
         }
     }
 
-
-
     fun loadContainer (id: Long){
         loadOneContainer(id){
             containerLive.value=it
         }
+    }
+
+    suspend fun loadList(container: Long): List<TreePosition>{
+        return simpleiList.run(container)
     }
 }

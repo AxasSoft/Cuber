@@ -8,6 +8,7 @@ import kotlinx.coroutines.async
 import ru.wood.cuber.Loger
 import ru.wood.cuber.data.MyOrderContentsTab
 import ru.wood.cuber.data.MyСontainer
+import ru.wood.cuber.data.TreePosition
 import ru.wood.cuber.databinding.ItemContainerSwipeBinding
 import ru.wood.cuber.interactors.*
 import javax.inject.Inject
@@ -18,8 +19,8 @@ class ContainsViewModel @Inject constructor (
         private val loadlist: LoadContains,
         private val deleteOne: DeleteOneContain,
         private val deleteTrees: ClearOneContain,
-        private val getCommonQuantity:CommonQuantity
-
+        private val getCommonQuantity:CommonQuantity,
+        private val simpleiList:SimpleLoadTrees
         ) : BaseViewModel() {
 
     var liveData = MutableLiveData<List<MyСontainer>>()
@@ -70,5 +71,8 @@ class ContainsViewModel @Inject constructor (
 
     suspend fun getQuantity(id: Long): Int{
         return getCommonQuantity.run(id)
+    }
+    suspend fun loadListTrees(container: Long): List<TreePosition>{
+        return simpleiList.run(container)
     }
 }

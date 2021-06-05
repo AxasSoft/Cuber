@@ -54,17 +54,16 @@
             android:clickable="true"
             android:focusable="true"
             android:textStyle="bold"
-            android:id="@+id/result"
+            android:id="@+id/volume"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20sp"
-            android:textColor="@color/black"
-            android:text="30.23 M3"/>
+            android:textColor="@color/black"/>
         <TextView
-            android:layout_below="@id/result"
+            android:layout_below="@id/volume"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="112 шт."/>
+            android:id="@+id/quantity"/>
 
     </RelativeLayout>
     <LinearLayout

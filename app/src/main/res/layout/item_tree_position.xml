@@ -43,8 +43,6 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/quantity"/>
             <TextView
-                android:text="@{String.valueOf(entity.volume)}"
-                android:hint="volume"
                 android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

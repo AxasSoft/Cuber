@@ -2,7 +2,9 @@ package ru.wood.cuber.view_models
 
 import androidx.lifecycle.MutableLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ru.wood.cuber.Loger
 import ru.wood.cuber.data.MyOrder
+import ru.wood.cuber.data.MyСontainer
 import ru.wood.cuber.interactors.*
 import javax.inject.Inject
 
@@ -12,7 +14,8 @@ class OrderViewModel @Inject constructor(
         private val loadlist: LoadOrderList,
         private val save: SaveOneOrder,
         private val delete: DeleteOneOrder,
-        private val deleteContaines: ClearOneOrder
+        private val deleteContaines: ClearOneOrder,
+        private val loadContainerlist: LoadContains,
         ) :BaseViewModel() {
 
     var liveData = MutableLiveData<List<MyOrder>>()
@@ -51,5 +54,8 @@ class OrderViewModel @Inject constructor(
     }
     private fun clearContainersContent(idOfCalculates: Long){
         deleteContaines(idOfCalculates)
+    }
+    suspend fun containerslist(order: Long):List<MyСontainer> {
+        return loadContainerlist.run(order)
     }
 }

@@ -21,17 +21,16 @@
 
             <TextView
                 android:textStyle="bold"
-                android:id="@+id/text_view_1"
+                android:id="@+id/volume"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
-                android:textColor="@color/black"
-                android:text="30.23 M3"/>
+                android:textColor="@color/black"/>
             <TextView
-                android:layout_below="@id/text_view_1"
+                android:id="@+id/quantity"
+                android:layout_below="@id/volume"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="112 шт."/>
+                android:layout_height="wrap_content"/>
 
         </RelativeLayout>
         <LinearLayout

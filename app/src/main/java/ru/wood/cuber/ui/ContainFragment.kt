@@ -29,6 +29,7 @@ import ru.wood.cuber.interactors.CommonQuantity
 import ru.wood.cuber.repositories.RepositoryContains
 import ru.wood.cuber.room.AppDatabase
 import ru.wood.cuber.utill.Utill.BUNDLE_CONTAINER_ID
+import ru.wood.cuber.volume.Volume
 
 @AndroidEntryPoint
 class ContainFragment : Fragment() {
@@ -136,17 +137,29 @@ class ContainFragment : Fragment() {
     private fun swipeHolderAction(binder: ItemContainerSwipeBinding, entity: MyСontainer, position: Int, itemView: View){
         with(binder){
             this.entity=entity
-            val textView=binder.include.quantity
+            val quantity=binder.include.quantity
 
             //------------------------------------------------
             lifecycleScope.launch {
-               val quantity= async { withContext(Dispatchers.IO){
+               val result= async { withContext(Dispatchers.IO){
                    Loger.log(viewModel.getQuantity(entity.id).toString()+"в корутинах //////////")
                    viewModel.getQuantity(entity.id) }
                }
-                textView.text=quantity.await().toString()
+                quantity.text=result.await().toString()
             }
+
             //------------------------------------------------
+            lifecycleScope.launch(Dispatchers.Main){
+                val list= async{withContext(Dispatchers.IO){
+                    viewModel.loadListTrees(entity.id) }
+                }
+                val result= Volume.total(list.await())
+                val totalVolume="%.2f".format(result).toDouble().toString() + " м³"
+                binder.include.volume.text= totalVolume
+            }
+            //-------------------------------------------------
+
+
 
             swipe.setShowMode(SwipeLayout.ShowMode.PullOut)
             //dari kanan

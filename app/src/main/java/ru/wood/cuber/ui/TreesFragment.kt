@@ -1,5 +1,6 @@
 package ru.wood.cuber.ui
 
+import android.annotation.SuppressLint
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.*
@@ -8,11 +9,15 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.daimajia.swipe.SwipeLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.wood.cuber.Loger
 import ru.wood.cuber.R
 import ru.wood.cuber.utill.Utill
@@ -27,7 +32,9 @@ import ru.wood.cuber.databinding.ItemTreesSwipeBinding
 import ru.wood.cuber.ui.diametrs.DiametrContainer
 import ru.wood.cuber.utill.Utill.BUNDLE_CONTAINER_ID
 import ru.wood.cuber.utill.Utill.BUNDLE_TREE_ID
+import ru.wood.cuber.utill.Utill.BUNDLE_VOLUME
 import ru.wood.cuber.view_models.TreesViewModel
+import ru.wood.cuber.volume.Volume
 
 @AndroidEntryPoint
 class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
@@ -36,25 +43,34 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
     private var adapter: SwipeRecyclerAdapter2<TreePosition, ItemTreesSwipeBinding>?=null
     private var currentPositionLength : Int = 0
     private lateinit var spinnerText: TextView
-    private var idOfContain : Long? =null
     private var actionBar: ActionBar?=null
+    private var idOfContain : Long? =null
+    private lateinit var binding:FragmentTreesBinding
+
+    private lateinit var totalVolume:String
+    private lateinit var totalQuantity:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         currentPositionLength=1
+        idOfContain= arguments?.getLong(BUNDLE_CONTAINER_ID)
         navController= Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
         actionBar=(activity as AppCompatActivity).supportActionBar
         actionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             title=""
         }
+        val diametrFrag=DiametrContainer.newInstance(idOfContain!!)
+        val transaction = childFragmentManager.beginTransaction()
+        transaction.add(R.id.diametr_container,diametrFrag).commit()
     }
+
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        val binding=FragmentTreesBinding.inflate(inflater)
+        binding=FragmentTreesBinding.inflate(inflater)
         //binding.result.paintFlags = binding.result.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         val view= binding.root
         val recycler=binding.recycler
@@ -65,13 +81,13 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
                 Utill.LENGTHS
         )
 
-        val result=binding.result.apply {
+        val volume=binding.volume.apply {
             paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
+            displayVolume()
             setOnClickListener {
                 goToResult()
             }
         }
-
 
         spinnerLength.apply {
             setAdapter(lengths)
@@ -92,11 +108,6 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
             }
         }
 
-        idOfContain= arguments?.getLong(BUNDLE_CONTAINER_ID)
-        val diametrFrag=DiametrContainer.newInstance(idOfContain!!)
-        val transaction = childFragmentManager.beginTransaction()
-        transaction.add(R.id.diametr_container,diametrFrag).commit()
-
         with(viewModel){
             loadContainer(idOfContain!!)
 
@@ -110,6 +121,7 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
 
             refreshList(idOfContain!!)
             liveData.observe(viewLifecycleOwner, {
+                displayVolume()
                 it?.let {
                     Loger.log(it)
                     adapter = SwipeRecyclerAdapter2(it, R.layout.item_trees_swipe,
@@ -144,6 +156,8 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
         idOfContain?.let {
             val bundle= Bundle()
             bundle.putLong(BUNDLE_CONTAINER_ID,it)
+            bundle.putString(BUNDLE_VOLUME, totalVolume)
+            bundle.putString(BUNDLE_QUANTITY, totalQuantity)
             navController?.navigate(R.id.action_treesFragment_to_resultFragment,bundle)
         }
     }
@@ -173,6 +187,20 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
 
     }
 
+    @SuppressLint("SetTextI18n")
+    private fun displayVolume() {
+        lifecycleScope.launch(Dispatchers.Main){
+            val list= async{withContext(Dispatchers.IO){
+                viewModel.loadList(idOfContain!!) }
+            }
+            val result= Volume.total(list.await())
+            totalVolume="%.2f".format(result).toDouble().toString() + "м³"
+            totalQuantity="${list.await().size} шт"
+            binding.volume.text= totalVolume
+            binding.quantity.text= totalQuantity
+        }
+    }
+
     private fun subscribeClickPosition(clicableLayout: View, entity: TreePosition){
         clicableLayout.setOnClickListener {
             val bundle= Bundle()
@@ -199,6 +227,22 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
             itemView: View
     ){
         with(binder){
+
+            val textView=binder.include.volume
+
+            //------------------------------------------------
+            lifecycleScope.launch {
+                val result= async { withContext(Dispatchers.IO){
+                    Volume.calculateOne(
+                         entity.diameter!!,
+                         entity.length!!,
+                         entity.quantity) }
+                }
+                val volume=result.await()?:""
+                textView.text= volume.toString()
+            }
+            //------------------------------------------------
+
             this.entity=entity
             swipe.setShowMode(SwipeLayout.ShowMode.PullOut)
             //dari kanan
