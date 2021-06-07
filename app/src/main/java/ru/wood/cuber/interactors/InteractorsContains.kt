@@ -28,6 +28,7 @@ class SaveContent @Inject constructor(val repository: RepositoryContains): UseCa
         return ok!=0L
     }
 }
+
 class DeleteOneContain @Inject constructor(val repository: RepositoryContains): UseCase<Boolean, MyСontainer>() {
 
     override suspend fun run(params: MyСontainer): Boolean {
@@ -43,13 +44,13 @@ class DeleteContainers @Inject constructor(val repository: RepositoryContains): 
         return ok > 0
     }
 }
+
 class ContainersIdByOrder @Inject constructor(val repository: RepositoryContains): UseCase<List<Long>, Long>() {
 
     override suspend fun run(params: Long): List<Long> {
        return repository.containersIdByOrder(params)
     }
 }
-
 
 class ClearOneOrder @Inject constructor(val repository: RepositoryContains): UseCase<Boolean, Long>() {
 
@@ -58,6 +59,7 @@ class ClearOneOrder @Inject constructor(val repository: RepositoryContains): Use
         return ok > 0
     }
 }
+
 class LoadOne @Inject constructor(val repository: RepositoryContains): UseCase<MyСontainer, Long>() {
 
     override suspend fun run(params: Long): MyСontainer {
@@ -76,5 +78,12 @@ class LoadAllContains @Inject constructor(val repository: RepositoryContains): U
 
     override suspend fun run(params: Nothing?): List<MyСontainer> {
         return repository.getAll()
+    }
+}
+
+class ContainerId @Inject constructor(val repository: RepositoryContains): UseCase<Long, String>(){
+
+    override suspend fun run(params: String): Long {
+        return repository.containerId(params)
     }
 }

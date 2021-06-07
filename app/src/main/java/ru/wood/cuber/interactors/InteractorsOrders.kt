@@ -54,3 +54,10 @@ class OneOrder @Inject constructor(val repository: RepositoryMyOrder): UseCase<M
     }
 }
 
+class OrderId @Inject constructor(val repository: RepositoryMyOrder): UseCase<Long, Long>(){
+
+    override suspend fun run(params: Long): Long {
+        return repository.orderId(params)
+    }
+}
+

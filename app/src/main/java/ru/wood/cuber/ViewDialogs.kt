@@ -1,18 +1,23 @@
 package ru.wood.cuber
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.os.Message
 import android.view.Window
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.DialogFragment
 
 
 object ViewDialog {
-    fun showDialogOfLength(context: Context, positiveAction: ()->Unit, commonAction: ()-> Unit, checkBoxAction: ()-> Unit) {
+    fun showDialogOfLength(
+        context: Context,
+        positiveAction: () -> Unit,
+        commonAction: () -> Unit,
+        checkBoxAction: () -> Unit
+    ) {
         val dialog = Dialog(context)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
@@ -45,7 +50,11 @@ object ViewDialog {
         }
     }
 
-    fun showCreateCalculationDialog (context: Context, msg: String, positiveAction: (name: String)->Unit) {
+    fun showCreateCalculationDialog(
+        context: Context,
+        msg: String,
+        positiveAction: (name: String) -> Unit
+    ) {
         val dialog = Dialog(context)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
@@ -53,6 +62,12 @@ object ViewDialog {
 
         val editText =dialog.findViewById<EditText>(R.id.name)
         var name: String?=null
+
+        editText.apply {
+            isFocusableInTouchMode;
+            isFocusable = true;
+            requestFocus()
+        }
 
         val message =dialog.findViewById<TextView>(R.id.message)
         message.text=msg
@@ -63,7 +78,7 @@ object ViewDialog {
 
             if (name==null || name==""){
                 Loger.log("$name Введите имя")
-                Toast.makeText(context,"Введите имя", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Введите имя", Toast.LENGTH_SHORT).show()
             }else {
                 Loger.log("$name")
                 positiveAction(name!!)
@@ -83,10 +98,10 @@ object ViewDialog {
 }
 
 class SimpleDialogFragment(
-        val message: String?,
-        val positiveAction: ()-> Unit,
-        val negativeAction: ()->Unit
-        ):DialogFragment(){
+    val message: String?,
+    val positiveAction: () -> Unit,
+    val negativeAction: () -> Unit
+):DialogFragment(){
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
@@ -104,8 +119,8 @@ class SimpleDialogFragment(
 
 class SimpleDialogFragment2(
     val message: String?,
-    val positiveFunction: ()-> Unit,
-    val negativeFunction: ()->Unit
+    val positiveFunction: () -> Unit,
+    val negativeFunction: () -> Unit
 ):DialogFragment(){
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

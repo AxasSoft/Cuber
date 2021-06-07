@@ -135,7 +135,7 @@ class MyOrderFragment : Fragment() {
                 val result=async { withContext(Dispatchers.IO){
                     viewModel.containerslist(entity.id)
                 }}
-                val quantity="${result.await().size} шт"
+                val quantity="${result.await().size} шт."
                 binder.include.quantity.text=quantity
             }
 

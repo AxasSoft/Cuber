@@ -20,10 +20,13 @@ class ContainsViewModel @Inject constructor (
         private val deleteOne: DeleteOneContain,
         private val deleteTrees: ClearOneContain,
         private val getCommonQuantity:CommonQuantity,
-        private val simpleiList:SimpleLoadTrees
+        private val simpleiList:SimpleLoadTrees,
+        private val orderId:OrderId,
+        private val containerId: ContainerId
         ) : BaseViewModel() {
 
     var liveData = MutableLiveData<List<MyСontainer>>()
+    var orderLive = MutableLiveData<Long>()
     var commonQuantity = MutableLiveData<Int>()
 
     fun refreshList(idOfCalculates: Long){
@@ -32,8 +35,19 @@ class ContainsViewModel @Inject constructor (
             liveData.value=it
         }
     }
+    suspend fun addNewAndGetId(name: String, order: Long): Long?{
+        val one = MyСontainer(
+            name = name,
+            date = currentDate)
+        val it=save.run(one)
+        val ok=it!=0L
+        if (ok){
+            saveContent(order=order, idOfContainers=it)
+            return it
+        } else return null
+    }
 
-    fun addNew(name: String, idOfCalculates: Long){
+    fun addNew(name: String, order: Long){
         val one = MyСontainer(
                 name = name,
                 date = currentDate)
@@ -41,18 +55,18 @@ class ContainsViewModel @Inject constructor (
         save(one){
             val ok=it!=0L
             if (ok){
-                saveContent(idOfCalculates=idOfCalculates, idOfContainers=it)
+                saveContent(order=order, idOfContainers=it)
             }
         }
     }
 
-    private fun saveContent(idOfCalculates: Long, idOfContainers: Long){
+    private fun saveContent(order: Long, idOfContainers: Long){
         saveContent(MyOrderContentsTab(
-                idOfOrder = idOfCalculates,
+                idOfOrder = order,
                 idOfContainers = idOfContainers
         )){ contentSaved ->
             if(contentSaved){
-                refreshList(idOfCalculates)
+                refreshList(order)
             }
         }
     }
@@ -74,5 +88,14 @@ class ContainsViewModel @Inject constructor (
     }
     suspend fun loadListTrees(container: Long): List<TreePosition>{
         return simpleiList.run(container)
+    }
+
+    fun getOrderId(container: Long){
+        orderId(container){
+            orderLive.value=it
+        }
+    }
+    suspend fun getId(name: String): Long{
+        return containerId.run(name)
     }
 }

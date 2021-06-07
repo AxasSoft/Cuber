@@ -74,8 +74,12 @@ class ExcelViewModel @Inject constructor(
                 keyCount++
 
 
-                date=order.date!!
-                order_no=order.name!!
+                if (order.date==null || order.name==null){
+                    println("order.date==null || order.name==null")
+                    return
+                }
+                date=order.date
+                order_no= order.name!!
                 container_no=name!!
                 length=lengthTemp.toString()
                 diameter=diameterTemp.toString()

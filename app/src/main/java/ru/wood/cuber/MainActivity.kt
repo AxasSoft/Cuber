@@ -1,6 +1,8 @@
 package ru.wood.cuber
 
+import android.content.Context
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil.setContentView
@@ -31,7 +33,6 @@ class MainActivity : AppCompatActivity() {
         for (x in 16..51 ){
             Utill.DIAMETERS?.add(x)
         }
-
 
     }
 }

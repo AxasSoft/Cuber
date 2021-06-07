@@ -37,4 +37,7 @@ class RepositoryMyOrder @Inject constructor(val dao: DaoMyOrder)  {
     fun getOrder(container: Long): MyOrder{
         return dao.getOrderForContainer(container)
     }
+    fun orderId( container: Long): Long{
+        return dao.getOrderId(container)
+    }
 }

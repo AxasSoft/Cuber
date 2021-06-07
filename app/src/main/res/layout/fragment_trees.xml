@@ -88,7 +88,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <TextView
-        android:text="V, m3"
+        android:text="V, m³"
         android:layout_marginRight="@dimen/margin_normal"
         android:layout_weight="1"
         android:layout_width="match_parent"
@@ -99,19 +99,28 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/black"/>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler"
-        android:layout_marginLeft="@dimen/margin_normal"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
+        <RelativeLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_above="@+id/diametr_container"
+                android:layout_weight="1"
+                android:id="@+id/recycler"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+            <FrameLayout
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/margin_min"
+                android:id="@+id/diametr_container"
+                android:layout_width="match_parent"
+                android:layout_height="290dp"/>
+        </RelativeLayout>
     </LinearLayout>
-    <FrameLayout
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="@dimen/margin_min"
-        android:id="@+id/diametr_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-</FrameLayout>
+    </FrameLayout>
 </layout>

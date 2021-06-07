@@ -101,7 +101,7 @@ class ExcelManager (val context: Context)  {
             if (!dir.exists()) {
                 dir.mkdirs()
             }
-            fileTarget = dir.getAbsolutePath() + "/test1.xls"
+            fileTarget = dir.getAbsolutePath() + "/order.xls"
             val filePath: File = File(fileTarget)
             fos = FileOutputStream(filePath)
             workbook.write(fos)

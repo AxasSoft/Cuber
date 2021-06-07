@@ -33,6 +33,7 @@ import ru.wood.cuber.ui.diametrs.DiametrContainer
 import ru.wood.cuber.utill.Utill.BUNDLE_CONTAINER_ID
 import ru.wood.cuber.utill.Utill.BUNDLE_TREE_ID
 import ru.wood.cuber.utill.Utill.BUNDLE_VOLUME
+import ru.wood.cuber.view_models.ContainsViewModel
 import ru.wood.cuber.view_models.TreesViewModel
 import ru.wood.cuber.volume.Volume
 
@@ -40,6 +41,7 @@ import ru.wood.cuber.volume.Volume
 class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
     private var navController: NavController? =null
     private val viewModel: TreesViewModel by activityViewModels()
+    private val containers: ContainsViewModel by activityViewModels()
     private var adapter: SwipeRecyclerAdapter2<TreePosition, ItemTreesSwipeBinding>?=null
     private var currentPositionLength : Int = 0
     private lateinit var spinnerText: TextView
@@ -49,6 +51,12 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
 
     private lateinit var totalVolume:String
     private lateinit var totalQuantity:String
+
+    fun createDiametrFrag(){
+        val diametrFrag=DiametrContainer.newInstance(idOfContain!!)
+        val transaction = childFragmentManager.beginTransaction()
+        transaction.replace(R.id.diametr_container,diametrFrag).commit()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,9 +69,7 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
             setDisplayHomeAsUpEnabled(true)
             title=""
         }
-        val diametrFrag=DiametrContainer.newInstance(idOfContain!!)
-        val transaction = childFragmentManager.beginTransaction()
-        transaction.add(R.id.diametr_container,diametrFrag).commit()
+        createDiametrFrag()
     }
 
     override fun onCreateView(
@@ -144,6 +150,12 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
                 }
             })
         }
+        containers.orderLive.observe(viewLifecycleOwner,{
+            it?.let {
+                createNew(it)
+                containers.orderLive.value=null
+            }
+        })
 
         return view
     }
@@ -176,6 +188,10 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
                 val bundle = Bundle()
                 bundle.putLong(BUNDLE_CONTAINER_ID, idOfContain!!)
                 navController?.navigate(R.id.action_treesFragment_to_containerRedactFragment,bundle)
+                return true
+            }
+            R.id.add->{
+                containers.getOrderId(idOfContain!!)
                 return true
             }
             else ->{
@@ -302,5 +318,18 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
         )
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         this.adapter = adapter
+    }
+    fun createNew(order: Long){
+        ViewDialog.showCreateCalculationDialog(requireContext(), "Введите номер контейнера"){
+            lifecycleScope.launch (Dispatchers.Main){
+                val id=async { withContext(Dispatchers.IO){
+                    containers.addNewAndGetId(it,order)
+                }}
+                actionBar?.title=it
+                idOfContain=id.await()
+                viewModel.refreshList(idOfContain!!)
+                createDiametrFrag()
+            }
+        }
     }
 }

@@ -49,4 +49,7 @@ interface DaoContains {
     @Query("SELECT * FROM MyСontainer")
     fun loadAll(): List<MyСontainer>
 
+    @Query("SELECT id FROM MyСontainer WHERE name=:name LIMIT 1")
+    fun getIdByName(name: String): Long
+
 }

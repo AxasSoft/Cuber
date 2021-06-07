@@ -57,4 +57,7 @@ class RepositoryContains @Inject constructor(val dao: DaoContains){
     fun containersIdByOrder(order : Long): List<Long>{
         return dao.containersIdByOrder(order)
     }
+    fun containerId(name: String): Long{
+        return dao.getIdByName(name)
+    }
 }

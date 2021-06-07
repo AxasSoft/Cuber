@@ -23,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import ru.wood.cuber.Loger
 import ru.wood.cuber.R
 import ru.wood.cuber.ViewDialog
@@ -31,14 +32,17 @@ import ru.wood.cuber.adapters.SwipeRecyclerAdapter2
 import ru.wood.cuber.data.MyСontainer
 import ru.wood.cuber.databinding.FragmentContainBinding
 import ru.wood.cuber.databinding.ItemContainerSwipeBinding
+import ru.wood.cuber.managers.ExcelManager
 import ru.wood.cuber.utill.Utill.BUNDLE_CONTAINER_ID
 import ru.wood.cuber.view_models.ContainsViewModel
+import ru.wood.cuber.view_models.ExcelViewModel
 import ru.wood.cuber.volume.Volume
 
 @AndroidEntryPoint
 class ContainFragment : Fragment() {
     private lateinit var navController: NavController
     private val viewModel: ContainsViewModel by viewModels()
+    private val excelViewModel: ExcelViewModel by viewModels()
     private lateinit var adapter: SwipeRecyclerAdapter2<MyСontainer, ItemContainerSwipeBinding>
     private var idOfCalculate: Long? =null
     private  var actionBar: ActionBar? =null
@@ -46,10 +50,12 @@ class ContainFragment : Fragment() {
     private lateinit var editText: EditText
     private lateinit var myCustomView: View
     private lateinit var currentList : List<MyСontainer>
+    private lateinit var excelManager : ExcelManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        excelManager= ExcelManager(requireContext())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -145,6 +151,17 @@ class ContainFragment : Fragment() {
             })
 
         }
+        excelViewModel.liveData.observe(viewLifecycleOwner,{
+            it?.let{
+                println("true \n"+it)
+                with(excelManager){
+                    val workbook: HSSFWorkbook = this.createFile(it)
+                    val ok=writeFile(workbook)
+                    if (ok){openFile()}
+                }
+                excelViewModel.liveData.value=null
+            }
+        })
 
         return view
     }
@@ -173,6 +190,12 @@ class ContainFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
+            R.id.upload -> {
+                lifecycleScope.launch (Dispatchers.IO){
+                    excelViewModel.getAllRow()
+                }
+                return true
+            }
             R.id.search -> {
                 if (viewIsVisible) {
                     Loger.log("2 $viewIsVisible")
@@ -217,7 +240,7 @@ class ContainFragment : Fragment() {
                    Loger.log(viewModel.getQuantity(entity.id).toString() + "в корутинах //////////")
                    viewModel.getQuantity(entity.id) }
                }
-                quantity.text=result.await().toString()
+                quantity.text="${result.await().toString()} шт."
             }
 
             //------------------------------------------------

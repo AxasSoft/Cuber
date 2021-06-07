@@ -20,4 +20,7 @@ interface DaoMyOrder {
 
     @Query("SELECT *  FROM MyOrder LEFT JOIN MyOrderContentsTab ON MyOrderContentsTab.idOfOrder=MyOrder.id WHERE idOfContainers=:container")
     fun getOrderForContainer(container: Long): MyOrder
+
+    @Query("SELECT MyOrderContentsTab.idOfOrder FROM MyOrderContentsTab WHERE idOfContainers=:container ")
+    fun getOrderId (container: Long): Long
 }
