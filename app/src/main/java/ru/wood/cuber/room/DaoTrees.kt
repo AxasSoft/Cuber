@@ -18,6 +18,9 @@ interface DaoTrees {
     @Delete
     fun delete(tree: TreePosition): Int
 
+    @Query("DELETE FROM TreePosition WHERE id IN (SELECT idOfTreePosition FROM ContainerContentsTab WHERE idOfContainer IN (:containers))")
+    fun deleteForContainer(containers: List<Long>): Int
+
     @Query("DELETE FROM TreePosition " +
             "WHERE (TreePosition.length=:length AND TreePosition.diameter=:diameter)")
     fun delete(length: Double?, diameter: Int?): Int

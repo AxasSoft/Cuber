@@ -27,6 +27,14 @@ class RepositoryMyOrder @Inject constructor(val dao: DaoMyOrder)  {
     }
 
     fun  deleteOne(one: MyOrder): Int{
-        return dao.delete(one)
+        return deleteOne(one.id)
+    }
+
+    fun  deleteOne(id: Long): Int{
+        return dao.delete(id)
+    }
+
+    fun getOrder(container: Long): MyOrder{
+        return dao.getOrderForContainer(container)
     }
 }

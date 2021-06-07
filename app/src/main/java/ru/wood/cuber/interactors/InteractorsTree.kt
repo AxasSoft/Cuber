@@ -25,7 +25,6 @@ class SaveOneTree @Inject constructor(val repository: RepositoryTrees): UseCase<
 
     override suspend fun run(params: TreePosition) :Long{
         val idOfConteiner=repository.saveOne(params)
-        Loger.log("id of saved position $idOfConteiner")
         return idOfConteiner
     }
 }
@@ -34,7 +33,6 @@ class SaveTreeContent @Inject constructor(val repository: RepositoryTrees): UseC
 
     override suspend fun run(params: ContainerContentsTab) :Boolean{
         val ok=repository.saveContent(params)
-        Loger.log("id of saved position $ok")
         return ok!=0L
     }
 }
@@ -46,7 +44,14 @@ class DeleteOneTree @Inject constructor(val repository: RepositoryTrees): UseCas
         val length=params.length
         val diameter=params.diameter
         val ok = repository.delete(length,diameter)
-        Loger.log("id of saved position $ok")
+        return ok > 0
+    }
+}
+
+class DeleteForContainer @Inject constructor(val repository: RepositoryTrees): UseCase<Boolean, List<Long>>() {
+
+    override suspend fun run(params: List<Long>): Boolean {
+        val ok = repository.deleteForContainer(params)
         return ok > 0
     }
 }
@@ -55,7 +60,6 @@ class ClearOneContain @Inject constructor(val repository: RepositoryTrees): UseC
 
     override suspend fun run(params: Long): Boolean {
         val ok = repository.deleteContent(params)
-        Loger.log("id of saved position $ok")
         return ok > 0
     }
 }

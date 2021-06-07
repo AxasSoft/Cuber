@@ -14,8 +14,11 @@ class OrderViewModel @Inject constructor(
         private val loadlist: LoadOrderList,
         private val save: SaveOneOrder,
         private val delete: DeleteOneOrder,
-        private val deleteContaines: ClearOneOrder,
+        private val deleteContent: ClearOneOrder,
+        private val deleteContainers: DeleteContainers,
         private val loadContainerlist: LoadContains,
+        private val deleteTrees:DeleteForContainer,
+        private val containersId: ContainersIdByOrder
         ) :BaseViewModel() {
 
     var liveData = MutableLiveData<List<MyOrder>>()
@@ -48,14 +51,21 @@ class OrderViewModel @Inject constructor(
         delete(one){
             if (it){
                 refreshList()
-                clearContainersContent(one.id)
+                clearContent(one.id)
             }
         }
     }
-    private fun clearContainersContent(idOfCalculates: Long){
-        deleteContaines(idOfCalculates)
+
+    private fun clearContent(order: Long){
+        containersId(order){
+            val list : List<Long> =it
+            deleteTrees(list)
+            deleteContainers(order){
+                deleteContent(order)
+            }
+        }
     }
     suspend fun containerslist(order: Long):List<MyСontainer> {
-        return loadContainerlist.run(order)
+        return loadContainerlist.run(order)!!
     }
 }

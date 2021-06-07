@@ -15,6 +15,9 @@ interface DaoMyOrder {
     @Query("SELECT * FROM MyOrder")
     fun load() : List<MyOrder>
 
-    @Delete
-    fun delete(myCalculations: MyOrder): Int
+    @Query("DELETE FROM MyOrder WHERE id=:id")
+    fun delete(id: Long): Int
+
+    @Query("SELECT *  FROM MyOrder LEFT JOIN MyOrderContentsTab ON MyOrderContentsTab.idOfOrder=MyOrder.id WHERE idOfContainers=:container")
+    fun getOrderForContainer(container: Long): MyOrder
 }

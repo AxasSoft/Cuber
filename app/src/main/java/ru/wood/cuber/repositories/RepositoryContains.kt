@@ -43,10 +43,18 @@ class RepositoryContains @Inject constructor(val dao: DaoContains){
     }
     fun deleteContent(idOfCalculates: Long): Int{
         val resultContentDelete = dao.deleteContent(idOfCalculates)
-        Loger.log("resultContentDelete = $resultContentDelete")
         return resultContentDelete
     }
     fun getQuantity(container: Long): Int{
         return dao.calculateQuantity(container)
+    }
+    fun getAll(): List<MyСontainer>{
+        return dao.loadAll()
+    }
+    fun deleteContainers(order : Long): Int{
+        return dao.deleteContainers(order)
+    }
+    fun containersIdByOrder(order : Long): List<Long>{
+        return dao.containersIdByOrder(order)
     }
 }

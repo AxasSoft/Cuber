@@ -47,4 +47,7 @@ class RepositoryTrees @Inject constructor(val dao: DaoTrees) {
     fun loadSimpleList(container: Long): List<TreePosition>{
         return dao.loadSimpleList(container)
     }
+    fun deleteForContainer(container: List<Long>): Int{
+        return dao.deleteForContainer(container)
+    }
 }

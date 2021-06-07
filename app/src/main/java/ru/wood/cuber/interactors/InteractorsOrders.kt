@@ -37,3 +37,20 @@ class DeleteOneOrder @Inject constructor(val repository: RepositoryMyOrder): Use
         return ok>0
     }
 }
+
+class DeleteOneOrderById @Inject constructor(val repository: RepositoryMyOrder): UseCase<Boolean, Long>(){
+
+    override suspend fun run(params: Long) :Boolean{
+        val ok=repository.deleteOne(params)
+        Loger.log("id of saved position $ok")
+        return ok>0
+    }
+}
+
+class OneOrder @Inject constructor(val repository: RepositoryMyOrder): UseCase<MyOrder, Long>(){
+
+    override suspend fun run(params: Long): MyOrder {
+        return repository.getOrder(params)
+    }
+}
+

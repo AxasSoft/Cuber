@@ -194,7 +194,7 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
                 viewModel.loadList(idOfContain!!) }
             }
             val result= Volume.total(list.await())
-            totalVolume="%.2f".format(result).toDouble().toString() + "м³"
+            totalVolume="%.2f".format(result) + "м³"
             totalQuantity="${list.await().size} шт"
             binding.volume.text= totalVolume
             binding.quantity.text= totalQuantity
@@ -238,8 +238,10 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
                          entity.length!!,
                          entity.quantity) }
                 }
-                val volume=result.await()?:""
-                textView.text= volume.toString()
+                val volume=result.await()
+                if (volume==null){
+                    textView.text=""
+                } else  textView.text= String.format("%.2f", volume)
             }
             //------------------------------------------------
 

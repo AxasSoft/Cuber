@@ -21,7 +21,7 @@ object Volume {
 
         } else {
             val result =(coefficient as Double)*quantity
-            return "%.2f".format(result).toDouble()
+            return result
         }
     }
     suspend fun total(list : List<TreePosition>):Double{

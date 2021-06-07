@@ -18,7 +18,6 @@ class DatabaseModule {
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
         return AppDatabase.getInstance(context)!!
     }
-
     @Provides
     fun provideDaoTrees(appDatabase: AppDatabase): DaoTrees {
         return appDatabase.daoTrees()
@@ -42,5 +41,9 @@ class DatabaseModule {
     @Provides
     fun provideDaoTreeRedact(appDatabase: AppDatabase): DaoTreeRedact {
         return appDatabase.daoTreeRedact()
+    }
+    @Provides
+    fun provideDaoExcel(appDatabase: AppDatabase): DaoExcel {
+        return appDatabase.daoExcel()
     }
 }

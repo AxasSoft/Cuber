@@ -16,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import ru.wood.cuber.R
 import ru.wood.cuber.ViewDialog
 import ru.wood.cuber.adapters.RecyclerCallback
@@ -24,17 +25,22 @@ import ru.wood.cuber.data.MyOrder
 import ru.wood.cuber.databinding.FragmentMyOrderBinding
 import ru.wood.cuber.databinding.ItemCalculateSwipeBinding
 import ru.wood.cuber.utill.Utill.BUNDLE_CONTAINER_ID
+import ru.wood.cuber.managers.ExcelManager
+import ru.wood.cuber.view_models.ExcelViewModel
 import ru.wood.cuber.view_models.OrderViewModel
 
 @AndroidEntryPoint
 class MyOrderFragment : Fragment() {
     private lateinit var navController: NavController
     private val viewModel: OrderViewModel by viewModels()
+    private val excelViewModel: ExcelViewModel by viewModels()
+    private lateinit var excelManager : ExcelManager
     private lateinit var adapter:SwipeRecyclerAdapter2<MyOrder,ItemCalculateSwipeBinding>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        excelManager= ExcelManager(requireContext())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,6 +60,7 @@ class MyOrderFragment : Fragment() {
         binding.fragment=this
         navController=findNavController(this)
 
+
         val recycler=binding.recycler
         with(viewModel){
             refreshList()
@@ -70,6 +77,17 @@ class MyOrderFragment : Fragment() {
                 adapter.notifyDataSetChanged()
             })
         }
+        excelViewModel.liveData.observe(viewLifecycleOwner,{
+            it?.let{
+                println("true \n"+it)
+                with(excelManager){
+                    val workbook: HSSFWorkbook= this.createFile(it)
+                    val ok=writeFile(workbook)
+                    if (ok){openFile()}
+                }
+                excelViewModel.liveData.value=null
+            }
+        })
 
         return view
     }
@@ -95,6 +113,12 @@ class MyOrderFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
+            R.id.upload -> {
+                lifecycleScope.launch (Dispatchers.IO){
+                    excelViewModel.getAllRow()
+                }
+                return true
+            }
             /* R.id.download_pdf-> {
                  return true
              }*/
@@ -114,7 +138,6 @@ class MyOrderFragment : Fragment() {
                 val quantity="${result.await().size} шт"
                 binder.include.quantity.text=quantity
             }
-
 
             swipe.addDrag(
                     SwipeLayout.DragEdge.Right, binder.swipe.findViewById(R.id.bottom_wraper))
@@ -151,4 +174,18 @@ class MyOrderFragment : Fragment() {
         }
         adapter.mItemManger.bindView(itemView, position)
     }
+/*
+    fun uploadExcel(){
+        lifecycleScope.launch(Dispatchers.Main){
+            val list = async { withContext(Dispatchers.IO){
+                excelViewModel.getAllRow()
+            } }
+
+            with(excelManager){
+                val workbook: HSSFWorkbook= this.createFile(list.await())
+                val ok=writeFile(workbook)
+                if (ok){openFile()}
+            }
+        }
+    }*/
 }
