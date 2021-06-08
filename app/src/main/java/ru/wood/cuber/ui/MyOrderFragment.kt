@@ -3,7 +3,6 @@ package ru.wood.cuber.ui
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -30,7 +29,7 @@ import ru.wood.cuber.view_models.ExcelViewModel
 import ru.wood.cuber.view_models.OrderViewModel
 
 @AndroidEntryPoint
-class MyOrderFragment : Fragment() {
+class MyOrderFragment : BaseFragment() {
     private lateinit var navController: NavController
     private val viewModel: OrderViewModel by viewModels()
     private val excelViewModel: ExcelViewModel by viewModels()
@@ -41,6 +40,7 @@ class MyOrderFragment : Fragment() {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         excelManager= ExcelManager(requireContext())
+        showSplashScreen(requireActivity())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -49,6 +49,7 @@ class MyOrderFragment : Fragment() {
             title = ""
             setDisplayHomeAsUpEnabled(false)
         }
+
     }
 
     override fun onCreateView(
@@ -59,7 +60,6 @@ class MyOrderFragment : Fragment() {
         val view=binding.root
         binding.fragment=this
         navController=findNavController(this)
-
 
         val recycler=binding.recycler
         with(viewModel){
@@ -75,15 +75,20 @@ class MyOrderFragment : Fragment() {
                         })
                 recycler.adapter=adapter
                 adapter.notifyDataSetChanged()
+                hideSplashScreen(requireActivity())
             })
         }
         excelViewModel.liveData.observe(viewLifecycleOwner,{
             it?.let{
-                println("true \n"+it)
-                with(excelManager){
-                    val workbook: HSSFWorkbook= this.createFile(it)
-                    val ok=writeFile(workbook)
-                    if (ok){openFile()}
+                if (it.isEmpty()){
+                    Toast.makeText(requireContext(),"У вас нет ни одной записи", Toast.LENGTH_SHORT).show()
+                } else{
+                    println("true \n"+it)
+                    with(excelManager){
+                        val workbook: HSSFWorkbook= this.createFile(it)
+                        val ok=writeFile(workbook)
+                        if (ok){openFile()}
+                    }
                 }
                 excelViewModel.liveData.value=null
             }
@@ -167,8 +172,7 @@ class MyOrderFragment : Fragment() {
                     mItemManger.closeAllItems()
                 }
 
-                Toast.makeText(requireContext(), "Deleted " + binder.include.entity?.name.toString(),
-                        Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Позиция удалена", Toast.LENGTH_SHORT).show()
             })
 
         }

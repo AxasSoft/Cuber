@@ -97,12 +97,16 @@ class ContainFragment : Fragment() {
                         val text=s.toString()
                         println(s.toString())
                         currentList.let {
+                            println("3")
                             val list=search(text,it)
-                            if (list?.size>0){
+                            viewModel.liveData.value=list
+                            /*if (list?.size>0){
                                 viewModel.liveData.value=list
-                            }
+                            }*/
                         }
-                    } else idOfCalculate?.let { it1 -> viewModel.refreshList(it1) }
+                    }  else if (s.isEmpty()){
+                        idOfCalculate?.let { it1 -> viewModel.refreshList(it1); println("4") }
+                    }
                 }
 
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -117,10 +121,13 @@ class ContainFragment : Fragment() {
         with(viewModel){
             idOfCalculate?.let {refreshList(it)}
             liveData.observe(viewLifecycleOwner, {
-                if (it == null) {
+                if (it == null ) {
+                    println("1 it")
                     return@observe
                 }
-                currentList=it
+                if (it.isNotEmpty()){
+                    currentList=it
+                }
 
                 adapter = SwipeRecyclerAdapter2(it, R.layout.item_container_swipe,
                     object : RecyclerCallback<ItemContainerSwipeBinding, MyСontainer> {
@@ -153,11 +160,15 @@ class ContainFragment : Fragment() {
         }
         excelViewModel.liveData.observe(viewLifecycleOwner,{
             it?.let{
-                println("true \n"+it)
-                with(excelManager){
-                    val workbook: HSSFWorkbook = this.createFile(it)
-                    val ok=writeFile(workbook)
-                    if (ok){openFile()}
+                if (it.isEmpty()){
+                    Toast.makeText(requireContext(),"У вас нет ни одной записи", Toast.LENGTH_SHORT).show()
+                } else{
+                    println("true \n"+it)
+                    with(excelManager){
+                        val workbook: HSSFWorkbook= this.createFile(it)
+                        val ok=writeFile(workbook)
+                        if (ok){openFile()}
+                    }
                 }
                 excelViewModel.liveData.value=null
             }
@@ -288,10 +299,7 @@ class ContainFragment : Fragment() {
                     mItemManger.closeAllItems()
                 }
 
-                Toast.makeText(
-                    requireContext(), "Deleted " + binder.include.entity?.name.toString(),
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(requireContext(), "Позиция удалена", Toast.LENGTH_SHORT).show()
             })
 
         }

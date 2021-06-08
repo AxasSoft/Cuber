@@ -49,4 +49,9 @@
         android:id="@+id/containerRedactFragment"
         android:name="ru.wood.cuber.ui.ContainerRedactFragment"
         android:label="ContainerRedactFragment" />
+    <fragment
+        android:id="@+id/baseFragment"
+        android:name="ru.wood.cuber.ui.BaseFragment"
+        android:label="fragment_base"
+        tools:layout="@layout/fragment_base" />
 </navigation>

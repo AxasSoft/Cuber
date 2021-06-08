@@ -1,9 +1,6 @@
 package ru.wood.cuber.room
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import ru.wood.cuber.data.MyOrderContentsTab
 import ru.wood.cuber.data.MyСontainer
 import ru.wood.cuber.data.TreePosition
@@ -41,15 +38,12 @@ interface DaoContains {
    /* @Query("SELECT count(TreePosition.id) AS quantity FROM TreePosition WHERE id IN (SELECT idOfTreePosition FROM ContainerContentsTab WHERE idOfContainer=:container)")
     fun calculateQuantity(container: Long): Int
 
-
     @Query("SELECT count(TreePosition.id) AS quantity FROM TreePosition LEFT JOIN ContainerContentsTab ON TreePosition.id==ContainerContentsTab.idOfTreePosition WHERE ContainerContentsTab.idOfContainer=:container")
     fun calculateQuantity(container: Long): Int*/
-
 
     @Query("SELECT * FROM MyСontainer")
     fun loadAll(): List<MyСontainer>
 
     @Query("SELECT id FROM MyСontainer WHERE name=:name LIMIT 1")
     fun getIdByName(name: String): Long
-
 }

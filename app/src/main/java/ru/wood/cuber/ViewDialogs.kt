@@ -3,7 +3,9 @@ package ru.wood.cuber
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
+import android.os.Handler
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
@@ -62,12 +64,6 @@ object ViewDialog {
 
         val editText =dialog.findViewById<EditText>(R.id.name)
         var name: String?=null
-
-        editText.apply {
-            isFocusableInTouchMode;
-            isFocusable = true;
-            requestFocus()
-        }
 
         val message =dialog.findViewById<TextView>(R.id.message)
         message.text=msg

@@ -7,6 +7,7 @@ import ru.wood.cuber.data.*
 import ru.wood.cuber.interactors.*
 import ru.wood.cuber.interactors.ParamsClasses.Limit
 import ru.wood.cuber.interactors.ParamsClasses.NewParams
+import java.util.*
 import javax.inject.Inject
 @HiltViewModel
 class TreesViewModel @Inject constructor (
@@ -26,6 +27,9 @@ class TreesViewModel @Inject constructor (
     fun refreshList(idOfContain: Long){
         loadlist(idOfContain){
             Loger.log("refresh list size ${it.size}")
+            Collections.sort(it, kotlin.Comparator { o1, o2 -> o1.id.compareTo(o2.id) })
+
+
             liveData.value=it
         }
     }

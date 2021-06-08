@@ -110,13 +110,16 @@ class ResultFragment : Fragment() {
         //------------------------------------------------
         lifecycleScope.launch {
             val result= async { withContext(Dispatchers.IO){
-                Volume.calculateOne(
+                viewModel.getVolume(idOfContain!!, entity.length!!)
+                /*Volume.calculateOne(
                         entity.diameter!!,
                         entity.length!!,
-                        entity.quantity) }
-            }
-            val volume=result.await()?:""
-            textView.text= "%.2f".format(volume).toDouble().toString()
+                        entity.quantity) */
+            }}
+            val volume=result.await()
+            val finalVolume="%.2f".format(volume) + "м³"
+            textView.text= finalVolume
+
         }
         //------------------------------------------------
     }
