@@ -72,4 +72,14 @@ class UpdateTreeLength @Inject constructor(val repository: RepositoryTrees): Use
         return ok>0
     }
 }
+class UpdateVolume @Inject constructor(val repository: RepositoryTrees): UseCase<Boolean, NewParams>() {
+    override suspend fun run(params: NewParams): Boolean{
+        val container=params.containerOfTrees
+        val length=params.length
+        val volume=params.volume
+        val ok = repository.updateVolumes(container,length,volume!!)
+        return ok>0
+    }
+}
+
 

@@ -7,6 +7,7 @@ import ru.wood.cuber.data.*
 import ru.wood.cuber.interactors.*
 import ru.wood.cuber.interactors.ParamsClasses.Limit
 import ru.wood.cuber.interactors.ParamsClasses.NewParams
+import ru.wood.cuber.volume.Volume
 import java.util.*
 import javax.inject.Inject
 @HiltViewModel
@@ -17,10 +18,12 @@ class TreesViewModel @Inject constructor (
         private val deleteOne: DeleteOneTree,
         private val updateLength: UpdateTreeLength,
         private val loadOneContainer:LoadOne,
-        private val simpleiList:SimpleLoadTrees
+        private val simpleiList:SimpleLoadTrees,
+        private val updateVolume:UpdateVolume
         ) : BaseViewModel () {
     var liveData = MutableLiveData<List<TreePosition>>()
     var containerLive = MutableLiveData<MyСontainer>()
+    var diameters : MutableList<Int> = arrayListOf()
 
     var commonLength: Double?=null
 
@@ -34,15 +37,19 @@ class TreesViewModel @Inject constructor (
         }
     }
     
-    fun addNew(container: Long, diameter: Int?){
+    fun addNew(container: Long, diameter: Int?, volume: Double){
         val one = TreePosition(
                 length = commonLength!!,
-                diameter = diameter
+                diameter = diameter,
+            volume=volume
         )
 
         save(one){
             val ok=it!=0L
             if (ok){
+                if (!diameters.contains(diameter)){
+                    diameters.add(diameter!!)
+                }
                 saveContent(
                         idOfContain= container,
                         idOfTree= it)
@@ -73,8 +80,22 @@ class TreesViewModel @Inject constructor (
         val newLength = NewParams(container, length)
         updateLength(newLength){
             if (it){
+                changeVolumes(container,length)
                 refreshList(container)
             }
+        }
+    }
+    private fun changeVolumes(currentContainer: Long, newLength: Double){
+        for (diametr in diameters){
+            changeVolumes(currentContainer,diametr,newLength)
+        }
+    }
+
+    private fun changeVolumes(currentContainer: Long, diametr: Int, newLength: Double){
+        val newVolume=Volume.calculateOne(diametr,newLength,1)
+        val newParam = NewParams(currentContainer, newLength,volume = newVolume)
+        updateVolume(newParam){
+            println("update volume for $it positions is finished")
         }
     }
 

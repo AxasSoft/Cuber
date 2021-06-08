@@ -65,20 +65,21 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
     override fun onDestroy() {
         super.onDestroy()
         resultViewModel.clearBd(idOfContain!!)
+        viewModel.diameters.clear()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        currentPositionLength=1
         idOfContain= arguments?.getLong(BUNDLE_CONTAINER_ID)
+        createDiametrFrag()
+        currentPositionLength=1
         navController= Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
         actionBar=(activity as AppCompatActivity).supportActionBar
         actionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             title=""
         }
-        createDiametrFrag()
     }
 
     override fun onCreateView(
@@ -113,9 +114,13 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
 
                     if (position!=currentPositionLength){
                         ViewDialog.showDialogOfLength(context,
-                                positiveAction={currentPositionLength = position},
+                                positiveAction={currentPositionLength = position; },
                                 commonAction={applyNewLength(this@apply,lengths )},
-                                checkBoxAction={viewModel.changeCommonLength(Utill.LENGTHS[position], idOfContain!!)}
+                                checkBoxAction={
+                                    viewModel.apply {
+                                        changeCommonLength(Utill.LENGTHS[position], idOfContain!!)
+                                        //changeVolumes(idOfContain!!,Utill.LENGTHS[position])
+                                    }}
                         )
                     }
                 }
@@ -138,6 +143,12 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
             liveData.observe(viewLifecycleOwner, {
                 displayVolume()
                 it?.let {
+                    for (tree in it){
+                        if (!viewModel.diameters.contains(tree.diameter)) {
+                            viewModel.diameters.add(tree.diameter!!)
+                        }
+                    }
+
                     resultViewModel.clearBd(idOfContain!!)
                     Loger.log(it)
                     adapter = SwipeRecyclerAdapter2(it, R.layout.item_trees_swipe,
@@ -222,7 +233,7 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
             val result= Volume.total(list.await())
             totalVolume="%.2f".format(result) + "м³"
             totalQuantity="${list.await().size} шт"
-            binding.volume.text= totalVolume
+            binding.volume.text= "%.2f".format(result) + "м³"
             binding.quantity.text= totalQuantity
         }
     }

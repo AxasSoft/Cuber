@@ -19,7 +19,7 @@ class RepositoryResult @Inject constructor(val dao: DaoResults) {
 
     fun volumeByLength(length: Double, container: Long): Double{
         Loger.log("volumeByLength = ${dao.groupByLength(length, container)} \n length = $length , container=$container")
-        return 0.0
+        return dao.groupByLength(length, container)
     }
 
     fun deleteVolumes (container: Long): Int{

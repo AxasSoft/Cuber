@@ -10,16 +10,19 @@ import com.google.android.material.tabs.TabLayoutMediator
 import ru.wood.cuber.Loger
 import ru.wood.cuber.adapters.MyPagerAdapter
 import ru.wood.cuber.databinding.FragmentDiametrContainerBinding
+import ru.wood.cuber.ui.TreesFragment
 
 private const val CONTAINER = "param1"
 
-open class DiametrContainer : Fragment() {
+open class DiametrContainer : Fragment(){
     object Container{
         var id: Long? =null
+        var length: Double? =null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         arguments?.let {
             Container.id = it.getLong(CONTAINER)
             Loger.log(Container.id.toString()+"----------------------")

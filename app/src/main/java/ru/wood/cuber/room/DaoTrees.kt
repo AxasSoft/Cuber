@@ -37,10 +37,11 @@ interface DaoTrees {
             "GROUP BY TreePosition.diameter, TreePosition.length")
     fun load(container: Long) : List<TreePosition>
 
-    @Query("UPDATE TreePosition SET length = :newLength  " +
-            "WHERE id IN (SELECT idOfTreePosition FROM ContainerContentsTab " +
-            "WHERE idOfContainer=:currentContainer) ")
+    @Query("UPDATE TreePosition SET length = :newLength WHERE id IN (SELECT idOfTreePosition FROM ContainerContentsTab WHERE idOfContainer=:currentContainer) ")
     fun updateLength(currentContainer: Long, newLength: Double): Int
+
+    @Query("UPDATE TreePosition SET volume = :newVolume WHERE id IN (SELECT idOfTreePosition FROM ContainerContentsTab WHERE idOfContainer=:currentContainer) AND length=:newLength")
+    fun updateVolumes(currentContainer: Long, newVolume: Double, newLength: Double ): Int
 
     @Query("SELECT * FROM TreePosition WHERE id IN (SELECT idOfTreePosition FROM ContainerContentsTab WHERE idOfContainer=:container)")
     fun loadSimpleList(container: Long) : List<TreePosition>

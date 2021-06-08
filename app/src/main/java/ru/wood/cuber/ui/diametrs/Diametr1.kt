@@ -7,10 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.wood.cuber.Loger
 import ru.wood.cuber.R
+import ru.wood.cuber.data.VolumesTab
 import ru.wood.cuber.databinding.FragmentDiametr1Binding
 import ru.wood.cuber.view_models.TreesViewModel
+import ru.wood.cuber.volume.Volume
 
 class Diametr1 : DiametrContainer() {
     private val viewModel: TreesViewModel by activityViewModels()
@@ -51,6 +58,16 @@ class Diametr1 : DiametrContainer() {
             R.id.length_34->diametr=34
             R.id.length_35->diametr=35
         }
-        viewModel.addNew(getContainer(), diametr)
+
+        lifecycleScope.launch {
+            val result= async { withContext(Dispatchers.IO){
+                Volume.calculateOne(diametr!!,viewModel.commonLength!!,1)
+            }}
+            val volume=result.await()
+
+            viewModel.addNew(getContainer(), diametr, volume)
+        }
+        //------
+
     }
 }

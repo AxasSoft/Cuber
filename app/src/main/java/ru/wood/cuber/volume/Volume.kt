@@ -3,7 +3,7 @@ package ru.wood.cuber.volume
 import ru.wood.cuber.data.TreePosition
 
 object Volume {
-    suspend fun calculateOne(diameter: Int, length_: Double, quantity: Int): Double{
+    fun calculateOne(diameter: Int, length_: Double, quantity: Int): Double{
         val diameter : Int = diameter
         val length : Number
         if (length_ % 1.0 == 0.0){

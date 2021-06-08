@@ -20,8 +20,8 @@ interface DaoResults {
     @Insert
     fun saveOneVolume(position : VolumesTab): Long
 
-    @Query("SELECT * FROM VolumesTab WHERE VolumesTab.length=:length AND VolumesTab.idOfContainer=:container")
-    fun groupByLength(length: Double, container: Long): List<VolumesTab>
+    @Query("SELECT SUM(TreePosition.volume) FROM TreePosition WHERE length=:length IN (SELECT ContainerContentsTab.id FROM ContainerContentsTab WHERE idOfContainer=:container)")
+    fun groupByLength(length: Double, container: Long):Double
 
     @Query("DELETE FROM VolumesTab WHERE idOfContainer=:container")
     fun delete(container: Long): Int
