@@ -45,7 +45,6 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
     private var navController: NavController? =null
     private val viewModel: TreesViewModel by activityViewModels()
     private val containers: ContainsViewModel by activityViewModels()
-    private val resultViewModel: ResultViewModel by viewModels()
     private var adapter: SwipeRecyclerAdapter2<TreePosition, ItemTreesSwipeBinding>?=null
     private var currentPositionLength : Int = 0
     private lateinit var spinnerText: TextView
@@ -64,7 +63,6 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
 
     override fun onDestroy() {
         super.onDestroy()
-        resultViewModel.clearBd(idOfContain!!)
         viewModel.diameters.clear()
     }
 
@@ -148,8 +146,6 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
                             viewModel.diameters.add(tree.diameter!!)
                         }
                     }
-
-                    resultViewModel.clearBd(idOfContain!!)
                     Loger.log(it)
                     adapter = SwipeRecyclerAdapter2(it, R.layout.item_trees_swipe,
                             object : RecyclerCallback<ItemTreesSwipeBinding, TreePosition> {
@@ -276,11 +272,6 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
                          entity.quantity) }
                 }
                 val volume=result.await()
-                resultViewModel.saveVolume(VolumesTab(
-                    idOfContainer=idOfContain!!,
-                    length=entity.length!!,
-                    diameter=entity.diameter!!,
-                    volume=volume ))
 
                 /*if (volume==null){
                     textView.text=""

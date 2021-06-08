@@ -43,8 +43,8 @@ class RepositoryTrees @Inject constructor(val dao: DaoTrees) {
     fun updateLength(currentContainer: Long, newLength: Double): Int{
         return dao.updateLength(currentContainer, newLength)
     }
-    fun updateVolumes(currentContainer: Long, newLength: Double, newVolume: Double): Int{
-        return dao.updateVolumes(currentContainer = currentContainer,newLength = newLength, newVolume = newVolume)
+    fun updateVolumes(id: Long, newVolume: Double): Int{
+        return dao.updateOneVolume(id = id, newVolume = newVolume)
     }
 
     fun loadSimpleList(container: Long): List<TreePosition>{

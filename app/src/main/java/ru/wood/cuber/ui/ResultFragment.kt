@@ -7,15 +7,13 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import ru.wood.cuber.R
 import ru.wood.cuber.adapters.CommonRecyclerAdapter
 import ru.wood.cuber.adapters.RecyclerCallback
@@ -25,7 +23,9 @@ import ru.wood.cuber.databinding.ItemResultPositionBinding
 import ru.wood.cuber.utill.Utill.BUNDLE_CONTAINER_ID
 import ru.wood.cuber.utill.Utill.BUNDLE_QUANTITY
 import ru.wood.cuber.utill.Utill.BUNDLE_VOLUME
+import ru.wood.cuber.view_models.BaseViewModel
 import ru.wood.cuber.view_models.ResultViewModel
+import ru.wood.cuber.view_models.TreeRedactViewModel
 import ru.wood.cuber.volume.Volume
 
 @AndroidEntryPoint
@@ -35,6 +35,8 @@ class ResultFragment : Fragment() {
     private var idOfContain : Long? =null
     private var totalVolume:String?=null
     private var totalQuantity:String?=null
+    private val redactViewModel: TreeRedactViewModel by activityViewModels()
+    private var blocking =false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +57,17 @@ class ResultFragment : Fragment() {
             volume.text=totalVolume
             quantity.text=totalQuantity
         }
+        redactViewModel.callbackThread.observe(requireActivity(),{
+            println("true $it")
+            if (blocking){return@observe}
+            lifecycleScope.launch(Dispatchers.Main){
+                val couritine=async { delay(3000)
+                    blocking=true
+                    idOfContain?.let { it1 -> viewModel.getListPosition(it1) } }
+                couritine.await()
+                blocking=false
+            }
+        })
 
         with(viewModel){
             idOfContain?.let {

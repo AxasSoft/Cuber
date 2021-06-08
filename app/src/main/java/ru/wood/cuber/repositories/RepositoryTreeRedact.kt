@@ -31,4 +31,8 @@ class RepositoryTreeRedact @Inject constructor(val dao : DaoTreeRedact) {
     fun idList(currentContainer: Long, diameter: Int,length: Double): List<Long>{
         return dao.getPositions(currentContainer, diameter, length)
     }
+
+    fun listPosition( list: List<Long>): List<TreePosition>{
+        return dao.listPosition(list)
+    }
 }

@@ -32,4 +32,7 @@ interface DaoTreeRedact {
             "AND diameter=:diameter AND length=:length")
     fun getPositions (currentContainer: Long, diameter: Int, length: Double): List<Long>
 
+    @Query("SELECT * FROM TreePosition WHERE id IN (:list)")
+    fun listPosition(list: List<Long>): List<TreePosition>
+
 }

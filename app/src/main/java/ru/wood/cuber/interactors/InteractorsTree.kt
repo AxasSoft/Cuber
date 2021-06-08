@@ -14,6 +14,7 @@ class LoadTrees @Inject constructor(val repository: RepositoryTrees): UseCase<Li
     }
 }
 
+
 class SimpleLoadTrees @Inject constructor(val repository: RepositoryTrees): UseCase<List<TreePosition>, Long?>(){
 
     override suspend fun run(params: Long?): List<TreePosition> {
@@ -68,16 +69,16 @@ class UpdateTreeLength @Inject constructor(val repository: RepositoryTrees): Use
     override suspend fun run(params: NewParams): Boolean{
         val container=params.containerOfTrees
         val length=params.length
-        val ok = repository.updateLength(container,length)
+        val ok = repository.updateLength(container!!,length!!)
         return ok>0
     }
 }
 class UpdateVolume @Inject constructor(val repository: RepositoryTrees): UseCase<Boolean, NewParams>() {
     override suspend fun run(params: NewParams): Boolean{
-        val container=params.containerOfTrees
-        val length=params.length
+        val id=params.id
         val volume=params.volume
-        val ok = repository.updateVolumes(container,length,volume!!)
+        val ok = repository.updateVolumes(id!!,volume!!)
+        Loger.log("updating positions "+repository.updateVolumes(id!!,volume!!))
         return ok>0
     }
 }

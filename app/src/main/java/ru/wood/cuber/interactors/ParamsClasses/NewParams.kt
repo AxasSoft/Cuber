@@ -1,8 +1,9 @@
 package ru.wood.cuber.interactors.ParamsClasses
 
 class NewParams (
-        val containerOfTrees: Long,
-        val length: Double,
+        val id: Long?=null,
+        val containerOfTrees: Long?=null,
+        val length: Double?=null,
         val diameter: Int?=null,
         val idList: List<Long>?=null,
         val volume: Double?=null

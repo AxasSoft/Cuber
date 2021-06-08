@@ -1,7 +1,9 @@
 package ru.wood.cuber.view_models
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.*
 import ru.wood.cuber.Loger
 import ru.wood.cuber.data.*
 import ru.wood.cuber.interactors.*
@@ -29,7 +31,6 @@ class TreesViewModel @Inject constructor (
 
     fun refreshList(idOfContain: Long){
         loadlist(idOfContain){
-            Loger.log("refresh list size ${it.size}")
             Collections.sort(it, kotlin.Comparator { o1, o2 -> o1.id.compareTo(o2.id) })
 
 
@@ -77,25 +78,35 @@ class TreesViewModel @Inject constructor (
     }
 
     fun changeCommonLength(length : Double, container:  Long){
-        val newLength = NewParams(container, length)
+        val newLength = NewParams(containerOfTrees = container, length=length)
         updateLength(newLength){
             if (it){
-                changeVolumes(container,length)
+                //changeVolumes(container,length)
+                simpleiList(container){
+                    Loger.log("positions for update $it")
+                    changeVolumes(it)
+
+                }
                 refreshList(container)
             }
         }
     }
-    private fun changeVolumes(currentContainer: Long, newLength: Double){
-        for (diametr in diameters){
-            changeVolumes(currentContainer,diametr,newLength)
-        }
-    }
+    private fun changeVolumes(list: List<TreePosition>){
+        viewModelScope.launch(Dispatchers.Main) {
+            for (x in list.indices){
+                Loger.log("----------------------$x")
+                val newVolume=Volume.calculateOne(
+                        list[x].diameter!!,
+                        list[x].length!!,
+                        list[x].quantity)
+                val param= NewParams(id = list[x].id, volume = newVolume)
+                val result=async(Dispatchers.IO) {
+                    updateVolume.run(param)
+                }
+               result.await()
+                Loger.log("-------------- $list[x]")
 
-    private fun changeVolumes(currentContainer: Long, diametr: Int, newLength: Double){
-        val newVolume=Volume.calculateOne(diametr,newLength,1)
-        val newParam = NewParams(currentContainer, newLength,volume = newVolume)
-        updateVolume(newParam){
-            println("update volume for $it positions is finished")
+            }
         }
     }
 

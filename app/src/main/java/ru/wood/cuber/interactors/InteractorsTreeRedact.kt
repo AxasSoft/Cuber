@@ -13,8 +13,8 @@ import javax.inject.Inject
 class SaveListTree @Inject constructor(val repository: RepositoryTreeRedact): UseCase<List<Long>, List<TreePosition>>(){
 
     override suspend fun run(params: List<TreePosition>) :List<Long>{
-        val ok=repository.saveList(params)
-        return ok
+        val list=repository.saveList(params)
+        return list
     }
 }
 
@@ -32,7 +32,7 @@ class UpdateTreePositions @Inject constructor(val repository: RepositoryTreeReda
         val length =params.length
         val list =params.idList
 
-        val ok = repository.updatePositions(diameter!!,length,list!!)
+        val ok = repository.updatePositions(diameter!!,length!!,list!!)
         return ok>0
     }
 }
@@ -58,6 +58,11 @@ class GetPositionsList @Inject constructor(val repository: RepositoryTreeRedact)
         val diameter=params.diameter
         val length =params.length
         val container =params.containerOfTrees
-        return repository.idList(container,diameter!!,length)
+        return repository.idList(container!!,diameter!!,length!!)
+    }
+}
+class ListPosition @Inject constructor(val repository: RepositoryTreeRedact) : UseCase<List<TreePosition>, List<Long>>() {
+    override suspend fun run( params: List<Long>): List<TreePosition> {
+        return repository.listPosition(params)
     }
 }

@@ -9,6 +9,7 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -33,9 +34,18 @@ class TreeRedactFragment : Fragment() {
     private var navController: NavController? =null
     private var supportToolbar : ActionBar? =null
     private var manager: FragmentManager?=null
-    private val viewModel: TreeRedactViewModel by viewModels()
+    private val viewModel: TreeRedactViewModel by activityViewModels()
     private var currentEntity: TreePosition?=null
     private var idOfContain : Long? =null
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Param.apply {
+             newLength = 0.0
+             newDiameter= 0
+             newQuantity =0
+        }
+    }
 
     object Param{
         var lastLength: Double = 0.0
