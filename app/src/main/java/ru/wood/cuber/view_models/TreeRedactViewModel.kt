@@ -32,7 +32,9 @@ class TreeRedactViewModel @Inject constructor(
     val callbackThread = MutableLiveData<Boolean>()
 
     fun getOneTree(id: Long){
+        Loger.log("example id $id")
         getOne(id){
+            Loger.log("example $it")
             onePositionLiveData.value=it
         }
     }
@@ -64,12 +66,21 @@ class TreeRedactViewModel @Inject constructor(
     private fun update(newParams: NewParams, id: List<Long>){
         updateParams(newParams){
             if (it){
-                listPosition(id){
+                CoroutineScope(Dispatchers.IO).launch {
+                    val result= async(Dispatchers.IO){
+                        listPosition.run(id)
+                    }
+                    val listOfTreePosition=result.await()
+                    Loger.log("listOfTreePosition $listOfTreePosition")
+                    changeVolumes(listOfTreePosition)
+                    paramsIsSaved.postValue(true)
+                }
+                /*listPosition(id){
+                    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!WHERE?
                     changeVolumes(it)
                     Loger.log("positions for update $it")
 
-                }
-                paramsIsSaved.value=true
+                }*/
             }
         }
     }
@@ -77,7 +88,7 @@ class TreeRedactViewModel @Inject constructor(
         Loger.log("changeVolumes $list")
         parentJob=GlobalScope.launch {
             for (x in list.indices){
-                Loger.log("----------------------$x")
+                Loger.log("----------------------indice $x")
                 val newVolume= Volume.calculateOne(
                         list[x].diameter!!,
                         list[x].length!!,
@@ -87,7 +98,7 @@ class TreeRedactViewModel @Inject constructor(
                     updateVolume.run(param)
                 }
                 result.await()
-                Loger.log("--$newVolume------------ ${list[x]}    ${result.await()}")
+                Loger.log("-result of changeValue ------$newVolume------------ ${list[x]}    ${result.await()}")
                 callbackThread.postValue(true)
             }
         }

@@ -78,10 +78,13 @@ class TreeRedactFragment : Fragment() {
         val quantity=arguments?.getInt(BUNDLE_QUANTITY)
         val editText=binding.editText
 
+        Loger.log("onCreateView --------------LAST QUANTITY ${Param.lastQuantity} NEW QUANTITY ${Param.newQuantity}")
+
         with(viewModel){
             id?.let { getOneTree(it) }
             onePositionLiveData.observe(viewLifecycleOwner,{
                 it?.let {
+                    Loger.log("onePosition (LiveData) --------------LAST QUANTITY ${Param.lastQuantity} NEW QUANTITY ${Param.newQuantity}")
                     currentEntity=it
                     completion(currentEntity!!,spinnerLength,spinnerDiameter,editText,quantity!!)
                     onePositionLiveData.value=null
@@ -90,9 +93,14 @@ class TreeRedactFragment : Fragment() {
             paramsIsSaved.observe(viewLifecycleOwner,{
                 it?.let {
                     if(it){
+                        Loger.log("paramsIsSaved (liveData) --------------LAST QUANTITY ${Param.lastQuantity} NEW QUANTITY ${Param.newQuantity}")
                         when(quantityIsChanged()){
-                            true-> letSavingQuantity2(comparisonQuantity())
-                            else-> backStack()
+                            true-> {
+                                Loger.log("letSavingQuantity2")
+                                letSavingQuantity2(comparisonQuantity())}
+                            else-> {
+                                Loger.log("backStack")
+                                backStack()}
                         }
                     }
                     paramsIsSaved.value=null
@@ -146,6 +154,7 @@ class TreeRedactFragment : Fragment() {
             lastLength=tree.length!!
             lastDiameter=tree.diameter!!
             lastQuantity=quantity
+            newQuantity= lastQuantity
         }
 
         chooseLengthPosition(tree, spinnerLength)
@@ -163,12 +172,15 @@ class TreeRedactFragment : Fragment() {
         toolbar.setOnClickListener {
             when {
                 paramsIsChanged() -> {
+                    Loger.log("let letSavingParams")
                     letSavingParams()
                 }
                 quantityIsChanged() -> {
+                    Loger.log("let letSavingQuantity")
                     letSavingQuantity(comparisonQuantity())
                 }
                 else -> {
+                    Loger.log("go to back stack")
                     backStack()
                 }
             }
@@ -187,14 +199,19 @@ class TreeRedactFragment : Fragment() {
     }
 
     private fun letSavingQuantity(comparisonResult : Int){
+        Loger.log("letSavingQuantity and comparisonResult $comparisonResult")
         when(comparisonResult){
-            INCREASE->{ val count =Param.newQuantity-Param.lastQuantity   //увеличение +1
+            INCREASE->{
+
+                Loger.log("letSavingQuantity INCREASE")
+                val count =Param.newQuantity-Param.lastQuantity   //увеличение +1
                 quitDialog {viewModel.addPositions(
                     container = idOfContain!!,
                     count = count,
                     diameter = Param.newDiameter,
                     length = Param.newLength) }}
-            DECREASE->{                                                  //уменьшение -1
+            DECREASE->{
+                Loger.log("letSavingQuantity DECREASE")                                              //уменьшение -1
                 val limit= Param.lastQuantity-Param.newQuantity
                 quitDialog {viewModel.limitDelete(
                     container = idOfContain!!,
@@ -205,14 +222,18 @@ class TreeRedactFragment : Fragment() {
         }
     }
     private fun letSavingQuantity2(comparisonResult : Int){
+        Loger.log("letSavingQuantity2 and comparisonResult $comparisonResult")
         when(comparisonResult){
-            INCREASE->{ val count =Param.newQuantity-Param.lastQuantity   //увеличение +1
+            INCREASE->{
+                Loger.log("letSavingQuantity2 INCREASE")
+                val count =Param.newQuantity-Param.lastQuantity   //увеличение +1
                 viewModel.addPositions(
                     container = idOfContain!!,
                     count = count,
                     diameter = Param.newDiameter,
                     length = Param.newLength)}
-            DECREASE->{                                                  //уменьшение -1
+            DECREASE->{
+                Loger.log("letSavingQuantity2 DECREASE")                                                //уменьшение -1
                 val limit= Param.lastQuantity-Param.newQuantity
                 viewModel.limitDelete(
                     container = idOfContain!!,

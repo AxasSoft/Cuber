@@ -12,7 +12,7 @@ import javax.inject.Inject
 class ContainRedactViewModel @Inject constructor(
     private val loadOneContainer: LoadOne,
     private val updateParam: ChangeContainParams
-):BaseViewModel()  {
+):BaseViewModel(){
 
     var containerLive = MutableLiveData<MyСontainer>()
     var paramsIsSaved= MutableLiveData<Boolean>()
@@ -31,5 +31,4 @@ class ContainRedactViewModel @Inject constructor(
             containerLive.value=it
         }
     }
-    
 }

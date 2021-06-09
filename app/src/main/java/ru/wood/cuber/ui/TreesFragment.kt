@@ -141,12 +141,12 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
             liveData.observe(viewLifecycleOwner, {
                 displayVolume()
                 it?.let {
-                    for (tree in it){
+                    /*for (tree in it){
                         if (!viewModel.diameters.contains(tree.diameter)) {
                             viewModel.diameters.add(tree.diameter!!)
                         }
-                    }
-                    Loger.log(it)
+                    }*/
+                    Loger.log("refreshinglist in Live data$it")
                     adapter = SwipeRecyclerAdapter2(it, R.layout.item_trees_swipe,
                             object : RecyclerCallback<ItemTreesSwipeBinding, TreePosition> {
                                 override fun bind(

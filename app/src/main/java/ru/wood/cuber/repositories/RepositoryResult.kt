@@ -7,7 +7,6 @@ import ru.wood.cuber.room.DaoResults
 import javax.inject.Inject
 
 class RepositoryResult @Inject constructor(val dao: DaoResults) {
-
     fun loadResult(container: Long) : List<TreePosition>{
         return dao.loadResult(container)
     }

@@ -266,8 +266,6 @@ class ContainFragment : Fragment() {
             }
             //-------------------------------------------------
 
-
-
             swipe.setShowMode(SwipeLayout.ShowMode.PullOut)
             //dari kanan
             swipe.addDrag(

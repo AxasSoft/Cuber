@@ -19,8 +19,7 @@ interface DaoTreeRedact {
     fun onePositionById(id: Long): TreePosition
 
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    @Query("UPDATE TreePosition SET length = :newLength, diameter=:newDiameter  " +
-            "WHERE id IN (:idList) ")
+    @Query("UPDATE TreePosition SET length = :newLength, diameter=:newDiameter WHERE id IN (:idList) ")
     fun updatePositions(newDiameter: Int,newLength: Double, idList :List<Long>): Int
 
     @Query("DELETE FROM TreePosition WHERE TreePosition.id IN (SELECT TreePosition.id FROM TreePosition LEFT JOIN ContainerContentsTab ON ContainerContentsTab.idOfTreePosition=TreePosition.id WHERE (ContainerContentsTab.idOfContainer=:container AND TreePosition.diameter=:diameter AND TreePosition.length=:length) LIMIT :limit)")

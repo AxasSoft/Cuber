@@ -31,6 +31,7 @@ class TreesViewModel @Inject constructor (
 
     fun refreshList(idOfContain: Long){
         loadlist(idOfContain){
+            Loger.log("let`s refreshList $it ---- for container $idOfContain")
             Collections.sort(it, kotlin.Comparator { o1, o2 -> o1.id.compareTo(o2.id) })
 
 
