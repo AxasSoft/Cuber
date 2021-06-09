@@ -1,7 +1,7 @@
 package ru.wood.cuber.utill
 
 object Utill {
-    val LENGTHS : List<Double> = arrayListOf(6.0, 5.4, 4.9)
+    var LENGTHS : MutableList<Double> = arrayListOf() //lateInit
     var DIAMETERS: MutableList<Int>? = arrayListOf()
 
     const val COUNT_QUANTITY=1

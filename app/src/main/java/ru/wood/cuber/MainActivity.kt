@@ -15,9 +15,9 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
 import dagger.hilt.android.AndroidEntryPoint
+import org.apache.poi.hpsf.Util
 import ru.wood.cuber.databinding.ActivityMainBinding
 import ru.wood.cuber.utill.Utill
-
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -26,11 +26,19 @@ class MainActivity : AppCompatActivity() {
     var navController: NavController? = null
     private lateinit var appBarConfiguration: AppBarConfiguration
 
+    fun initLengths (){
+        for (x in 60 downTo 30){
+            val number1digits:Double = String.format("%.1f", x/10.toDouble()).toDouble()
+            Utill.LENGTHS.add(number1digits)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding=setContentView<ActivityMainBinding>(this, R.layout.activity_main)
         binding.activity=this
 
+        initLengths()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         setSupportActionBar(findViewById(R.id.toolbar))

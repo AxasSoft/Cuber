@@ -35,6 +35,7 @@ import ru.wood.cuber.ui.diametrs.DiametrContainer
 import ru.wood.cuber.utill.Utill.BUNDLE_CONTAINER_ID
 import ru.wood.cuber.utill.Utill.BUNDLE_TREE_ID
 import ru.wood.cuber.utill.Utill.BUNDLE_VOLUME
+import ru.wood.cuber.utill.Utill.LENGTHS
 import ru.wood.cuber.view_models.ContainsViewModel
 import ru.wood.cuber.view_models.ResultViewModel
 import ru.wood.cuber.view_models.TreesViewModel
@@ -46,7 +47,7 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
     private val viewModel: TreesViewModel by activityViewModels()
     private val containers: ContainsViewModel by activityViewModels()
     private var adapter: SwipeRecyclerAdapter2<TreePosition, ItemTreesSwipeBinding>?=null
-    private var currentPositionLength : Int = 0
+    private var currentPositionLength : Int = 6
     private lateinit var spinnerText: TextView
     private var actionBar: ActionBar?=null
     private var idOfContain : Long? =null
@@ -71,7 +72,10 @@ class TreesFragment : Fragment(), SimpleRecyclerAdapter.OnPositionClickListener{
         setHasOptionsMenu(true)
         idOfContain= arguments?.getLong(BUNDLE_CONTAINER_ID)
         createDiametrFrag()
-        currentPositionLength=1
+        viewModel.commonLength?.let {
+            val position=LENGTHS.indexOf(it)
+            currentPositionLength=position
+        }
         navController= Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
         actionBar=(activity as AppCompatActivity).supportActionBar
         actionBar?.apply {
