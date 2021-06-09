@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 
     fun initLengths (){
         for (x in 60 downTo 30){
-            val number1digits:Double = String.format("%.1f", x/10.toDouble()).toDouble()
+            val number1digits:Double = x/10.toDouble()
             Utill.LENGTHS.add(number1digits)
         }
     }
