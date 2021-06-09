@@ -56,6 +56,7 @@ class TreeRedactViewModel @Inject constructor(
                     diameter = newDiameter,
                     idList = it
             )
+            Loger.log("new params for update ${newParams.containerOfTrees} ${newParams.length} ${newParams.diameter} ${newParams.idList}")
             update(newParams, it)
         }
     }

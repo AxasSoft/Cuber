@@ -127,6 +127,20 @@ class TreeRedactFragment : Fragment() {
         }
     }
 
+    private fun chooseLengthPosition(tree: TreePosition,spinnerLength: Spinner){
+        val position: Int=LENGTHS.indexOf(tree.length)
+        spinnerLength.setSelection(position)
+        Param.newLength=LENGTHS[position]
+
+    }
+
+    private fun chooseDiameterPosition(tree: TreePosition,spinnerDiameter: Spinner){
+        val position: Int=DIAMETERS!!.indexOf(tree.diameter)
+        spinnerDiameter.setSelection(position)
+        Param.newDiameter=DIAMETERS!![position]
+
+    }
+
     private fun completion(tree: TreePosition, spinnerLength: Spinner, spinnerDiameter: Spinner,editText: EditText, quantity: Int){
         Param.apply {
             lastLength=tree.length!!
@@ -134,8 +148,8 @@ class TreeRedactFragment : Fragment() {
             lastQuantity=quantity
         }
 
-        spinnerLength.setSelection(LENGTHS.indexOf(tree.length))
-        spinnerDiameter.setSelection(DIAMETERS!!.indexOf(tree.diameter))
+        chooseLengthPosition(tree, spinnerLength)
+        chooseDiameterPosition(tree, spinnerDiameter)
 
         (editText as TextView).text=quantity.toString()
 
